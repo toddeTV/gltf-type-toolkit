@@ -157,6 +157,7 @@
     }
   },
   "dependencies": {
+    "handlebars": "~4.7.8"
   },
   "devDependencies": {
     "@antfu/eslint-config": "~3.16.0",

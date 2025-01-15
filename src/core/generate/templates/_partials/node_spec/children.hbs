@@ -1,0 +1,6 @@
+[{{identifiers.pathSymbol}}]: [{{#join indices sep=", "}}{{.}}{{/join}}]{{separator}}
+{{#each children~}}
+{{this.name}}: {
+  {{> _partials/node_spec/children.hbs this identifiers=../identifiers indices=(append ../indices this.index) separator=../separator~}}
+}{{../separator}}
+{{/each}}

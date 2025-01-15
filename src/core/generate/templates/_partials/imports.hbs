@@ -1,0 +1,6 @@
+{{#each imports}}
+import {{#if typeOnly}}type {{/if~}} { {{#join identifiers sep=", "}}
+  {{~#if type}}type {{/if~}}
+  {{~name~}}
+{{/join}} } from '{{module}}';
+{{/each}}
