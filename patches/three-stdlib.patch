@@ -36,3 +36,95 @@ index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..7f9bfcdba43b9e84173de39054243d60
    }
    preload() {
      this._initDecoder();
+diff --git a/loaders/GLTFLoader.js b/loaders/GLTFLoader.js
+index 851226bb4c491b990459cae65009113035f200cc..35e6882b42a22abe1770c81b107a0036297ff1c9 100644
+--- a/loaders/GLTFLoader.js
++++ b/loaders/GLTFLoader.js
+@@ -2,6 +2,7 @@ import { Loader, LoaderUtils, FileLoader, Color, SpotLight, PointLight, Directio
+ import { toTrianglesDrawMode } from "../utils/BufferGeometryUtils.js";
+ import { version } from "../_polyfill/constants.js";
+ import { decodeText } from "../_polyfill/LoaderUtils.js";
++import { readFile } from "node:fs/promises";
+ const SRGBColorSpace = "srgb";
+ const LinearSRGBColorSpace = "srgb-linear";
+ const sRGBEncoding = 3001;
+@@ -1621,21 +1622,16 @@ class GLTFParser {
+    * @param {number} bufferIndex
+    * @return {Promise<ArrayBuffer>}
+    */
+-  loadBuffer(bufferIndex) {
++  async loadBuffer(bufferIndex) {
+     const bufferDef = this.json.buffers[bufferIndex];
+-    const loader = this.fileLoader;
+     if (bufferDef.type && bufferDef.type !== "arraybuffer") {
+       throw new Error("THREE.GLTFLoader: " + bufferDef.type + " buffer type is not supported.");
+     }
+     if (bufferDef.uri === void 0 && bufferIndex === 0) {
+       return Promise.resolve(this.extensions[EXTENSIONS.KHR_BINARY_GLTF].body);
+     }
+-    const options = this.options;
+-    return new Promise(function(resolve, reject) {
+-      loader.load(LoaderUtils.resolveURL(bufferDef.uri, options.path), resolve, void 0, function() {
+-        reject(new Error('THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".'));
+-      });
+-    });
++    const buffer = await readFile(LoaderUtils.resolveURL(bufferDef.uri, this.options.path), { encoding: 'binary' })
++    return new Uint8Array(buffer).buffer;
+   }
+   /**
+    * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#buffers-and-buffer-views
+@@ -1791,52 +1787,8 @@ class GLTFParser {
+     this.textureCache[cacheKey] = promise;
+     return promise;
+   }
+-  loadImageSource(sourceIndex, loader) {
+-    const parser = this;
+-    const json = this.json;
+-    const options = this.options;
+-    if (this.sourceCache[sourceIndex] !== void 0) {
+-      return this.sourceCache[sourceIndex].then((texture) => texture.clone());
+-    }
+-    const sourceDef = json.images[sourceIndex];
+-    const URL = self.URL || self.webkitURL;
+-    let sourceURI = sourceDef.uri || "";
+-    let isObjectURL = false;
+-    if (sourceDef.bufferView !== void 0) {
+-      sourceURI = parser.getDependency("bufferView", sourceDef.bufferView).then(function(bufferView) {
+-        isObjectURL = true;
+-        const blob = new Blob([bufferView], { type: sourceDef.mimeType });
+-        sourceURI = URL.createObjectURL(blob);
+-        return sourceURI;
+-      });
+-    } else if (sourceDef.uri === void 0) {
+-      throw new Error("THREE.GLTFLoader: Image " + sourceIndex + " is missing URI and bufferView");
+-    }
+-    const promise = Promise.resolve(sourceURI).then(function(sourceURI2) {
+-      return new Promise(function(resolve, reject) {
+-        let onLoad = resolve;
+-        if (loader.isImageBitmapLoader === true) {
+-          onLoad = function(imageBitmap) {
+-            const texture = new Texture(imageBitmap);
+-            texture.needsUpdate = true;
+-            resolve(texture);
+-          };
+-        }
+-        loader.load(LoaderUtils.resolveURL(sourceURI2, options.path), onLoad, void 0, reject);
+-      });
+-    }).then(function(texture) {
+-      if (isObjectURL === true) {
+-        URL.revokeObjectURL(sourceURI);
+-      }
+-      assignExtrasToUserData(texture, sourceDef);
+-      texture.userData.mimeType = sourceDef.mimeType || getImageURIMimeType(sourceDef.uri);
+-      return texture;
+-    }).catch(function(error) {
+-      console.error("THREE.GLTFLoader: Couldn't load texture", sourceURI);
+-      throw error;
+-    });
+-    this.sourceCache[sourceIndex] = promise;
+-    return promise;
++  async loadImageSource(sourceIndex, loader) {
++    return null;
+   }
+   /**
+    * Asynchronously assigns a texture to the given material parameters.
