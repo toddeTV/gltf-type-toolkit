@@ -22,7 +22,7 @@ export function analyzeGltfModel({ scenes }: Pick<GLTF, 'scenes'>): { imports: I
     const node: GltfNode = {
       children: [],
       index,
-      name: `${scene.name}Scene`,
+      name: toValidIdentifier(`${scene.name}Scene`),
       type: imports.addImport('three', scene.type, true),
     }
 
@@ -45,7 +45,7 @@ function collectNamedChildren(imports: Imports, obj: Object3D, parentNode: GltfN
       const node: GltfNode = {
         children: [],
         index,
-        name: child.name,
+        name: toValidIdentifier(child.name),
         type: imports.addImport('three', child.type, true),
       }
 
@@ -54,4 +54,12 @@ function collectNamedChildren(imports: Imports, obj: Object3D, parentNode: GltfN
       collectNamedChildren(imports, child, node)
     }
   }
+}
+
+function toValidIdentifier(name: string): string {
+  if (/^[a-z_]/i.test(name)) {
+    return name
+  }
+
+  return `_${name}`
 }
