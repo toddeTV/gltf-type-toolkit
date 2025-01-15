@@ -1,12 +1,6 @@
 import type { GltfAnalysis, GltfNode } from '../analyze.js'
-import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { handlebars } from './handlebars.js'
-
-const declaration = await handlebars.compileFile(
-  // TODO: Somehow get this to be bundled.
-  join(fileURLToPath(import.meta.url), '../templates/declaration.d.ts.hbs'),
-)
+import declaration from './templates/declaration.hbs.js'
+import './handlebars.js'
 
 export function generateModelDeclaration(
   { imports, scenes }: GltfAnalysis,

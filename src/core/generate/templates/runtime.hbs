@@ -1,4 +1,4 @@
-{{> _partials/imports.hbs}}
+{{> imports.hbs}}
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
 const {{identifiers.pathSymbol}} = Symbol();
@@ -8,11 +8,11 @@ const {{identifiers.pathSymbol}} = Symbol();
 export const {{name}} = {
   {{!-- We need to pass the PARENT identifiers down because we are now inside another context due to each. --}}
   {{!-- Also create the initial indices array. --}}
-  {{> _partials/node_spec/children.hbs this identifiers=../identifiers indices=(singleton index) separator=","}}
+  {{> node_spec/children.hbs this identifiers=../identifiers indices=(singleton index) separator=","}}
 };
 
 {{/each}}
-{{> _partials/node_getter/fn_prefix.hbs async=true identifiers=identifiers}}(spec) {
+{{> node_getter/fn_prefix.hbs async=true identifiers=identifiers}}(spec) {
   {{!-- Pretend that the complete model is also a `Object3D` to allow uniform access. --}}
   let {{identifiers.nodeName}} = { children: (await {{identifiers.modelVariable}}).scenes };
   for (const idx of spec[{{identifiers.pathSymbol}}]) {

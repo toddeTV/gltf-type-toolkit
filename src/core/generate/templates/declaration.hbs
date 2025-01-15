@@ -1,4 +1,4 @@
-{{> _partials/imports.hbs}}
+{{> imports.hbs}}
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
 declare const {{identifiers.pathSymbol}}: unique symbol;
@@ -8,13 +8,13 @@ declare const {{identifiers.pathSymbol}}: unique symbol;
 export const {{name}}: {
   {{!-- We need to pass the PARENT identifiers down because we are now inside another context due to each. --}}
   {{!-- Also create the initial indices array. --}}
-  {{> _partials/node_spec/children.hbs this identifiers=../identifiers indices=(singleton index) separator=";"}}
+  {{> node_spec/children.hbs this identifiers=../identifiers indices=(singleton index) separator=";"}}
 };
 
 {{/each}}
 {{!-- This iterates over all paths of the above data structure and generates function overloads. --}}
 {{#each flattenedTree}}
-{{> _partials/node_getter/fn_prefix.hbs async=false identifiers=../identifiers}}(spec: typeof {{#join names sep="."}}{{.}}{{/join}}): Promise<{{type}}>;
+{{> node_getter/fn_prefix.hbs async=false identifiers=../identifiers}}(spec: typeof {{#join names sep="."}}{{.}}{{/join}}): Promise<{{type}}>;
 {{/each}}
 
 {{!-- Prevent importing the path symbol --}}

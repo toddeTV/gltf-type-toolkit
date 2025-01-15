@@ -1,12 +1,6 @@
-import type { GltfAnalysis } from '../analyze.ts'
-import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { handlebars } from './handlebars.js'
-
-const runtime = await handlebars.compileFile(
-  // TODO: Somehow get this to be bundled.
-  join(fileURLToPath(import.meta.url), '../templates/runtime.js.hbs'),
-)
+import type { GltfAnalysis } from '../analyze.js'
+import runtime from './templates/runtime.hbs.js'
+import './handlebars.js'
 
 export function generateModelRuntime(
   { imports, scenes }: GltfAnalysis,

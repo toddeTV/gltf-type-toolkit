@@ -108,6 +108,8 @@
     "pnpm": "9"
   },
   "scripts": {
+    "postinstall": "esno scripts/precompile-templates.ts",
+    "precompile-templates": "esno scripts/precompile-templates.ts",
     "build": "tsup",
     "dev": "tsup --watch src",
     "build:post": "esno scripts/postbuild.ts",

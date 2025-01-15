@@ -1,0 +1,8 @@
+import Handlebars from 'handlebars';
+{{#each partials}}
+import partial_{{@index}} from './{{.}}.js';
+{{/each}}
+
+{{#each partials}}
+Handlebars.registerPartial('{{.}}', partial_{{@index}});
+{{/each}}
