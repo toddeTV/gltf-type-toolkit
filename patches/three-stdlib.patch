@@ -1,130 +1,174 @@
 diff --git a/loaders/DRACOLoader.js b/loaders/DRACOLoader.js
-index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..7f9bfcdba43b9e84173de39054243d6015a9e5ad 100644
+index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..3085ecc5affd3600d0266d60b3e02153c0cd183e 100644
 --- a/loaders/DRACOLoader.js
 +++ b/loaders/DRACOLoader.js
-@@ -1,9 +1,11 @@
-+import { readFile } from "node:fs/promises";
-+import { fileURLToPath } from "node:url";
+@@ -1,3 +1,4 @@
++import { createDecoderModule } from "draco3d";
  import { Loader, FileLoader, BufferGeometry, BufferAttribute } from "three";
  const _taskCache = /* @__PURE__ */ new WeakMap();
  class DRACOLoader extends Loader {
-   constructor(manager) {
-     super(manager);
--    this.decoderPath = "";
-+    this.decoderPath = fileURLToPath(import.meta.resolve('three/examples/jsm/libs/draco/gltf'));
-     this.decoderConfig = {};
-     this.decoderBinary = null;
-     this.decoderPending = null;
-@@ -118,14 +120,12 @@ class DRACOLoader extends Loader {
+@@ -86,13 +87,13 @@ class DRACOLoader extends Loader {
+     let worker;
+     const taskID = this.workerNextTaskID++;
+     const taskCost = buffer.byteLength;
+-    const geometryPending = this._getWorker(taskID, taskCost).then((_worker) => {
+-      worker = _worker;
+-      return new Promise((resolve, reject) => {
+-        worker._callbacks[taskID] = { resolve, reject };
+-        worker.postMessage({ type: "decode", id: taskID, taskConfig, buffer }, [buffer]);
+-      });
+-    }).then((message) => this._createGeometry(message.geometry));
++    const geometryPending = this._initDecoder().onmessage({
++      data: {
++        type: 'decode',
++        buffer,
++        taskConfig,
++      },
++    }).then((geometry) => this._createGeometry(geometry));
+     geometryPending.catch(() => true).then(() => {
+       if (worker && taskID) {
+         this._releaseTask(worker, taskID);
+@@ -134,6 +135,8 @@ class DRACOLoader extends Loader {
+   _initDecoder() {
+     if (this.decoderPending)
+       return this.decoderPending;
++    this.decoderPending = new DRACODecoder();
++    return this.decoderPending;
+     const useJS = typeof WebAssembly !== "object" || this.decoderConfig.type === "js";
+     const librariesPending = [];
+     if (useJS) {
+@@ -142,7 +145,7 @@ class DRACOLoader extends Loader {
+       librariesPending.push(this._loadLibrary("draco_wasm_wrapper.js", "text"));
+       librariesPending.push(this._loadLibrary("draco_decoder.wasm", "arraybuffer"));
      }
+-    this.decoderPending = Promise.all(librariesPending).then((libraries) => {
++    Promise.all(librariesPending).then((libraries) => {
+       const jsContent = libraries[0];
+       if (!useJS) {
+         this.decoderConfig.wasmBinary = libraries[1];
+@@ -211,10 +214,12 @@ class DRACOLoader extends Loader {
+     return this;
+   }
+ }
+-function DRACOWorker() {
+-  let decoderConfig;
+-  let decoderPending;
+-  onmessage = function(e) {
++class DRACODecoder {
++  decoderModulePending;
++  constructor() {
++    this.decoderModulePending = createDecoderModule();
++  }
++  onmessage(e) {
+     const message = e.data;
+     switch (message.type) {
+       case "init":
+@@ -229,20 +234,12 @@ function DRACOWorker() {
+       case "decode":
+         const buffer = message.buffer;
+         const taskConfig = message.taskConfig;
+-        decoderPending.then((module) => {
+-          const draco = module.draco;
++        return this.decoderModulePending.then((draco) => {
+           const decoder = new draco.Decoder();
+           const decoderBuffer = new draco.DecoderBuffer();
+           decoderBuffer.Init(new Int8Array(buffer), buffer.byteLength);
+           try {
+-            const geometry = decodeGeometry(draco, decoder, decoderBuffer, taskConfig);
+-            const buffers = geometry.attributes.map((attr) => attr.array.buffer);
+-            if (geometry.index)
+-              buffers.push(geometry.index.array.buffer);
+-            self.postMessage({ type: "decode", id: message.id, geometry }, buffers);
+-          } catch (error) {
+-            console.error(error);
+-            self.postMessage({ type: "error", id: message.id, error: error.message });
++            return this.decodeGeometry(draco, decoder, decoderBuffer, taskConfig);
+           } finally {
+             draco.destroy(decoderBuffer);
+             draco.destroy(decoder);
+@@ -251,7 +248,7 @@ function DRACOWorker() {
+         break;
+     }
+   };
+-  function decodeGeometry(draco, decoder, decoderBuffer, taskConfig) {
++  decodeGeometry(draco, decoder, decoderBuffer, taskConfig) {
+     const attributeIDs = taskConfig.attributeIDs;
+     const attributeTypes = taskConfig.attributeTypes;
+     let dracoGeometry;
+@@ -271,7 +268,7 @@ function DRACOWorker() {
+     }
+     const geometry = { index: null, attributes: [] };
+     for (const attributeName in attributeIDs) {
+-      const attributeType = self[attributeTypes[attributeName]];
++      const attributeType = global[attributeTypes[attributeName]];
+       let attribute;
+       let attributeID;
+       if (taskConfig.useUniqueIDs) {
+@@ -283,15 +280,15 @@ function DRACOWorker() {
+           continue;
+         attribute = decoder.GetAttribute(dracoGeometry, attributeID);
+       }
+-      geometry.attributes.push(decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute));
++      geometry.attributes.push(this.decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute));
+     }
+     if (geometryType === draco.TRIANGULAR_MESH) {
+-      geometry.index = decodeIndex(draco, decoder, dracoGeometry);
++      geometry.index = this.decodeIndex(draco, decoder, dracoGeometry);
+     }
+     draco.destroy(dracoGeometry);
      return geometry;
    }
--  _loadLibrary(url, responseType) {
--    const loader = new FileLoader(this.manager);
--    loader.setPath(this.decoderPath);
--    loader.setResponseType(responseType);
--    loader.setWithCredentials(this.withCredentials);
--    return new Promise((resolve, reject) => {
--      loader.load(url, resolve, void 0, reject);
--    });
-+  async _loadLibrary(url, responseType) {
-+    const lib = await readFile(`${this.decoderPath}/${url}`, { encoding: responseType === 'text' ? 'utf-8' : 'binary'})
-+    if (responseType === 'arraybuffer') {
-+      return new Uint8Array(lib).buffer
-+    }
-+    return lib;
+-  function decodeIndex(draco, decoder, dracoGeometry) {
++  decodeIndex(draco, decoder, dracoGeometry) {
+     const numFaces = dracoGeometry.num_faces();
+     const numIndices = numFaces * 3;
+     const byteLength = numIndices * 4;
+@@ -301,12 +298,12 @@ function DRACOWorker() {
+     draco._free(ptr);
+     return { array: index, itemSize: 1 };
    }
-   preload() {
-     this._initDecoder();
+-  function decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute) {
++  decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute) {
+     const numComponents = attribute.num_components();
+     const numPoints = dracoGeometry.num_points();
+     const numValues = numPoints * numComponents;
+     const byteLength = numValues * attributeType.BYTES_PER_ELEMENT;
+-    const dataType = getDracoDataType(draco, attributeType);
++    const dataType = this.getDracoDataType(draco, attributeType);
+     const ptr = draco._malloc(byteLength);
+     decoder.GetAttributeDataArrayForAllPoints(dracoGeometry, attribute, dataType, byteLength, ptr);
+     const array = new attributeType(draco.HEAPF32.buffer, ptr, numValues).slice();
+@@ -317,7 +314,7 @@ function DRACOWorker() {
+       itemSize: numComponents
+     };
+   }
+-  function getDracoDataType(draco, attributeType) {
++  getDracoDataType(draco, attributeType) {
+     switch (attributeType) {
+       case Float32Array:
+         return draco.DT_FLOAT32;
 diff --git a/loaders/GLTFLoader.js b/loaders/GLTFLoader.js
-index 851226bb4c491b990459cae65009113035f200cc..35e6882b42a22abe1770c81b107a0036297ff1c9 100644
+index 851226bb4c491b990459cae65009113035f200cc..3caf042194f46e605fb6eb26a70cb27e400b6c47 100644
 --- a/loaders/GLTFLoader.js
 +++ b/loaders/GLTFLoader.js
-@@ -2,6 +2,7 @@ import { Loader, LoaderUtils, FileLoader, Color, SpotLight, PointLight, Directio
+@@ -1,3 +1,4 @@
++import { readFile } from "node:fs/promises";
+ import { Loader, LoaderUtils, FileLoader, Color, SpotLight, PointLight, DirectionalLight, MeshBasicMaterial, MeshPhysicalMaterial, Vector2, Matrix4, Vector3, Quaternion, InstancedMesh, InstancedBufferAttribute, Object3D, TextureLoader, ImageBitmapLoader, BufferAttribute, InterleavedBuffer, InterleavedBufferAttribute, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, PointsMaterial, Material, LineBasicMaterial, MeshStandardMaterial, DoubleSide, PropertyBinding, BufferGeometry, SkinnedMesh, Mesh, TriangleStripDrawMode, TriangleFanDrawMode, LineSegments, Line, LineLoop, Points, Group, PerspectiveCamera, MathUtils, OrthographicCamera, Skeleton, AnimationClip, Bone, InterpolateLinear, NearestFilter, NearestMipmapNearestFilter, LinearMipmapNearestFilter, NearestMipmapLinearFilter, ClampToEdgeWrapping, MirroredRepeatWrapping, InterpolateDiscrete, FrontSide, Texture, VectorKeyframeTrack, NumberKeyframeTrack, QuaternionKeyframeTrack, Box3, Sphere, Interpolant } from "three";
  import { toTrianglesDrawMode } from "../utils/BufferGeometryUtils.js";
  import { version } from "../_polyfill/constants.js";
- import { decodeText } from "../_polyfill/LoaderUtils.js";
-+import { readFile } from "node:fs/promises";
- const SRGBColorSpace = "srgb";
- const LinearSRGBColorSpace = "srgb-linear";
- const sRGBEncoding = 3001;
-@@ -1621,21 +1622,16 @@ class GLTFParser {
-    * @param {number} bufferIndex
-    * @return {Promise<ArrayBuffer>}
-    */
--  loadBuffer(bufferIndex) {
-+  async loadBuffer(bufferIndex) {
-     const bufferDef = this.json.buffers[bufferIndex];
--    const loader = this.fileLoader;
-     if (bufferDef.type && bufferDef.type !== "arraybuffer") {
-       throw new Error("THREE.GLTFLoader: " + bufferDef.type + " buffer type is not supported.");
-     }
+@@ -1630,6 +1631,7 @@ class GLTFParser {
      if (bufferDef.uri === void 0 && bufferIndex === 0) {
        return Promise.resolve(this.extensions[EXTENSIONS.KHR_BINARY_GLTF].body);
      }
--    const options = this.options;
--    return new Promise(function(resolve, reject) {
--      loader.load(LoaderUtils.resolveURL(bufferDef.uri, options.path), resolve, void 0, function() {
--        reject(new Error('THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".'));
--      });
--    });
-+    const buffer = await readFile(LoaderUtils.resolveURL(bufferDef.uri, this.options.path), { encoding: 'binary' })
-+    return new Uint8Array(buffer).buffer;
-   }
-   /**
-    * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#buffers-and-buffer-views
-@@ -1791,52 +1787,8 @@ class GLTFParser {
-     this.textureCache[cacheKey] = promise;
++    return readFile(LoaderUtils.resolveURL(bufferDef.uri, this.options.path));
+     const options = this.options;
+     return new Promise(function(resolve, reject) {
+       loader.load(LoaderUtils.resolveURL(bufferDef.uri, options.path), resolve, void 0, function() {
+@@ -1792,6 +1794,7 @@ class GLTFParser {
      return promise;
    }
--  loadImageSource(sourceIndex, loader) {
--    const parser = this;
--    const json = this.json;
--    const options = this.options;
--    if (this.sourceCache[sourceIndex] !== void 0) {
--      return this.sourceCache[sourceIndex].then((texture) => texture.clone());
--    }
--    const sourceDef = json.images[sourceIndex];
--    const URL = self.URL || self.webkitURL;
--    let sourceURI = sourceDef.uri || "";
--    let isObjectURL = false;
--    if (sourceDef.bufferView !== void 0) {
--      sourceURI = parser.getDependency("bufferView", sourceDef.bufferView).then(function(bufferView) {
--        isObjectURL = true;
--        const blob = new Blob([bufferView], { type: sourceDef.mimeType });
--        sourceURI = URL.createObjectURL(blob);
--        return sourceURI;
--      });
--    } else if (sourceDef.uri === void 0) {
--      throw new Error("THREE.GLTFLoader: Image " + sourceIndex + " is missing URI and bufferView");
--    }
--    const promise = Promise.resolve(sourceURI).then(function(sourceURI2) {
--      return new Promise(function(resolve, reject) {
--        let onLoad = resolve;
--        if (loader.isImageBitmapLoader === true) {
--          onLoad = function(imageBitmap) {
--            const texture = new Texture(imageBitmap);
--            texture.needsUpdate = true;
--            resolve(texture);
--          };
--        }
--        loader.load(LoaderUtils.resolveURL(sourceURI2, options.path), onLoad, void 0, reject);
--      });
--    }).then(function(texture) {
--      if (isObjectURL === true) {
--        URL.revokeObjectURL(sourceURI);
--      }
--      assignExtrasToUserData(texture, sourceDef);
--      texture.userData.mimeType = sourceDef.mimeType || getImageURIMimeType(sourceDef.uri);
--      return texture;
--    }).catch(function(error) {
--      console.error("THREE.GLTFLoader: Couldn't load texture", sourceURI);
--      throw error;
--    });
--    this.sourceCache[sourceIndex] = promise;
--    return promise;
-+  async loadImageSource(sourceIndex, loader) {
-+    return null;
-   }
-   /**
-    * Asynchronously assigns a texture to the given material parameters.
+   loadImageSource(sourceIndex, loader) {
++    return Promise.resolve(null);
+     const parser = this;
+     const json = this.json;
+     const options = this.options;
