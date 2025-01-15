@@ -157,6 +157,7 @@
     }
   },
   "dependencies": {
+    "three-stdlib": "~2.35.7"
   },
   "devDependencies": {
     "@antfu/eslint-config": "~3.16.0",
@@ -168,8 +169,14 @@
     "esno": "~4.8.0",
     "fast-glob": "~3.3.3",
     "npm-run-all2": "~7.0.2",
+    "three": "~0.172.0",
     "tsup": "~8.3.5",
     "typescript": "~5.7.3",
     "unplugin": "~2.1.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "three-stdlib": "patches/three-stdlib.patch"
+    }
   }
 }

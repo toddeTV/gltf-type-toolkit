@@ -1,0 +1,38 @@
+diff --git a/loaders/DRACOLoader.js b/loaders/DRACOLoader.js
+index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..7f9bfcdba43b9e84173de39054243d6015a9e5ad 100644
+--- a/loaders/DRACOLoader.js
++++ b/loaders/DRACOLoader.js
+@@ -1,9 +1,11 @@
++import { readFile } from "node:fs/promises";
++import { fileURLToPath } from "node:url";
+ import { Loader, FileLoader, BufferGeometry, BufferAttribute } from "three";
+ const _taskCache = /* @__PURE__ */ new WeakMap();
+ class DRACOLoader extends Loader {
+   constructor(manager) {
+     super(manager);
+-    this.decoderPath = "";
++    this.decoderPath = fileURLToPath(import.meta.resolve('three/examples/jsm/libs/draco/gltf'));
+     this.decoderConfig = {};
+     this.decoderBinary = null;
+     this.decoderPending = null;
+@@ -118,14 +120,12 @@ class DRACOLoader extends Loader {
+     }
+     return geometry;
+   }
+-  _loadLibrary(url, responseType) {
+-    const loader = new FileLoader(this.manager);
+-    loader.setPath(this.decoderPath);
+-    loader.setResponseType(responseType);
+-    loader.setWithCredentials(this.withCredentials);
+-    return new Promise((resolve, reject) => {
+-      loader.load(url, resolve, void 0, reject);
+-    });
++  async _loadLibrary(url, responseType) {
++    const lib = await readFile(`${this.decoderPath}/${url}`, { encoding: responseType === 'text' ? 'utf-8' : 'binary'})
++    if (responseType === 'arraybuffer') {
++      return new Uint8Array(lib).buffer
++    }
++    return lib;
+   }
+   preload() {
+     this._initDecoder();
