@@ -1,38 +1,49 @@
-import type { Group, Object3D } from 'three'
-import type { GLTF } from 'three-stdlib'
+import type { GltfAnalysis, GltfNode } from '../analyze.ts'
 
-const PATH_SYMBOL_NAME = 'path'
+export function generateNodeSpecs(
+  { scenes }: GltfAnalysis,
+  names: {
+    pathSymbol: string
+  },
+): string {
+  const lines = scenes.flatMap(scene => [generateSceneNodeSpec(scene, names), ''])
 
-export function generateNodeSpecs({ scenes }: Pick<GLTF, 'scenes'>): string {
-  const lines = [`const ${PATH_SYMBOL_NAME} = Symbol();`, '', ...scenes.map(generateSceneNodeSpec)]
-
-  return lines.join('\n')
+  return lines.join('\n').trim()
 }
 
-function generateSceneNodeSpec(scene: Group, index: number): string {
+function generateSceneNodeSpec(
+  sceneNode: GltfNode,
+  names: {
+    pathSymbol: string
+  },
+): string {
   const lines = [
-    `export const ${scene.name}Scene = {`,
-    generateSpecContents(scene.children, [index], 1),
+    `export const ${sceneNode.name} = {`,
+    generateSpecContents(sceneNode, [sceneNode.index], 1, names),
     `};`,
   ]
 
   return lines.join('\n')
 }
 
-function generateSpecContents(children: Object3D[], indices: number[], level: number): string {
+function generateSpecContents(
+  node: GltfNode,
+  parentIndices: number[],
+  level: number,
+  names: {
+    pathSymbol: string
+  },
+): string {
   const indent = '  '.repeat(level)
 
-  const lines = [`${indent}[${PATH_SYMBOL_NAME}]: [${indices.join(', ')}],`]
+  const lines = [`${indent}[${names.pathSymbol}]: [${parentIndices.join(', ')}],`]
 
-  for (let idx = 0; idx < children.length; idx++) {
-    const child = children[idx]
-    if (child.name) {
-      lines.push(
-        `${indent}${child.name}: {`,
-        generateSpecContents(child.children, [...indices, idx], level + 1),
-        `${indent}},`,
-      )
-    }
+  for (const child of node.children) {
+    lines.push(
+      `${indent}${child.name}: {`,
+      generateSpecContents(child, [...parentIndices, child.index], level + 1, names),
+      `${indent}},`,
+    )
   }
 
   return lines.join('\n')
