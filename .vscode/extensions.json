@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "cesium.gltf-vscode",
+    "eamodio.gitlens",
+    "GitHub.copilot",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
+    "Gruntfuggly.todo-tree",
+    "Orta.vscode-twoslash-queries",
+    "richie5um2.vscode-sort-json",
+    "streetsidesoftware.code-spell-checker",
+    "yoavbls.pretty-ts-errors",
+    "yzhang.markdown-all-in-one"
+  ]
+}

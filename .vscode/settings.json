@@ -1,0 +1,21 @@
+{
+  "editor.linkedEditing": true,
+  "editor.rulers": [120],
+  "files.autoSave": "onFocusChange",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "javascript.preferences.renameMatchingJsxTags": true,
+  "npm.packageManager": "pnpm",
+  "search.exclude": {
+    "**/.output": true,
+    "**/.pnp.*": true,
+    "**/dist": true,
+    "node_modules": true,
+    "pnpm-lock.yaml": true
+  },
+  "search.useIgnoreFiles": false,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.preferences.renameMatchingJsxTags": true
+}
