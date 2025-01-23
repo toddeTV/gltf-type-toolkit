@@ -4,6 +4,7 @@ import perfectionist from 'eslint-plugin-perfectionist'
 export default antfu(
   {
     formatters: {
+      html: 'prettier',
       markdown: 'prettier',
     },
 

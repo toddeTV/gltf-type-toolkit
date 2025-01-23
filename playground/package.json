@@ -1,0 +1,12 @@
+{
+  "name": "gltf-type-toolkit-playground",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite"
+  },
+  "devDependencies": {
+    "vite": "~6.0.11",
+    "vite-plugin-inspect": "~10.1.0"
+  }
+}
