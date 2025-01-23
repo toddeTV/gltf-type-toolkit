@@ -1,4 +1,4 @@
-name: ci
+name: Linting
 
 permissions:
   contents: read
@@ -16,17 +16,22 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout the Codebase
+        uses: actions/checkout@v4
 
-      - name: set node version & pnpm cache
+      - name: Setup pnpm as package manager
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.15.4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-
-      - run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
