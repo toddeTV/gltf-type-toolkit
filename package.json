@@ -29,18 +29,6 @@
     "lint": "eslint .",
     "lint:fix": "run-s \"lint --fix\""
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "~3.16.0",
-    "@types/node": "~22.10.7",
-    "@types/three": "~0.172.0",
-    "eslint": "~9.18.0",
-    "eslint-plugin-format": "~1.0.1",
-    "eslint-plugin-perfectionist": "~4.7.0",
-    "npm-run-all2": "~7.0.2",
-    "typescript": "~5.7.3"
-  },
   "peerDependencies": {
     "@farmfe/core": ">=1",
     "@nuxt/kit": "^3",
@@ -73,5 +61,17 @@
     "webpack": {
       "optional": true
     }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "~3.16.0",
+    "@types/node": "~22.10.7",
+    "@types/three": "~0.172.0",
+    "eslint": "~9.18.0",
+    "eslint-plugin-format": "~1.0.1",
+    "eslint-plugin-perfectionist": "~4.7.0",
+    "npm-run-all2": "~7.0.2",
+    "typescript": "~5.7.3"
   }
 }

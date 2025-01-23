@@ -1,6 +1,6 @@
 # Developer README
 
-This document is intended for contributors. It explains how to set up the development environment for this project.  
+This document is intended for contributors. It explains how to set up the development environment for this project.<br>
 User-oriented documentation, including installation and usage instructions, can be found in [README.md](/README.md).
 
 ## initial setup
