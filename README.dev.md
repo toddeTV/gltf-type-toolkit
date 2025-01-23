@@ -30,6 +30,27 @@ Development VM ID from Thorsten for this project: `014`<br>
 6. Install dependencies: `pnpm i`
 7. Happy coding <3
 
+## lint and prettier
+
+This project uses [antfu/eslint-config](https://github.com/antfu/eslint-config) for eslint most of the files.
+The following extend it:
+
+- [antfu/eslint-plugin-format](https://github.com/antfu/eslint-plugin-format) for using external formatters like
+  e.g. `prettier` for the file types that eslint cannot handle.
+- [azat-io/eslint-plugin-perfectionist](https://github.com/azat-io/eslint-plugin-perfectionist) for
+  sorting object keys, imports, etc. - with auto-fix.
+
+Keep in mind that the plugin names are renamed, see
+[Plugins Rename](https://github.com/antfu/eslint-config?tab=readme-ov-file#plugins-renaming), e.g.:
+
+```diff
+-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
++// eslint-disable-next-line ts/consistent-type-definitions
+type foo = { bar: 2 }
+```
+
+[Why I don't use Prettier for every file type](https://antfu.me/posts/why-not-prettier)
+
 ## Docs and helper websites
 
 \[currently none\]
