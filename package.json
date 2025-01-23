@@ -37,6 +37,60 @@
     "esbuild",
     "rspack"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./astro": {
+      "import": "./dist/astro.js",
+      "require": "./dist/astro.cjs"
+    },
+    "./rspack": {
+      "import": "./dist/rspack.js",
+      "require": "./dist/rspack.cjs"
+    },
+    "./vite": {
+      "import": "./dist/vite.js",
+      "require": "./dist/vite.cjs"
+    },
+    "./webpack": {
+      "import": "./dist/webpack.js",
+      "require": "./dist/webpack.cjs"
+    },
+    "./rollup": {
+      "import": "./dist/rollup.js",
+      "require": "./dist/rollup.cjs"
+    },
+    "./esbuild": {
+      "import": "./dist/esbuild.js",
+      "require": "./dist/esbuild.cjs"
+    },
+    "./nuxt": {
+      "import": "./dist/nuxt.js",
+      "require": "./dist/nuxt.cjs"
+    },
+    "./farm": {
+      "import": "./dist/farm.js",
+      "require": "./dist/farm.cjs"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
+    },
+    "./*": "./*"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./*"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -45,8 +99,12 @@
     "pnpm": "9"
   },
   "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src",
+    "build:fix": "esno scripts/postbuild.ts",
     "lint": "eslint .",
-    "lint:fix": "run-s \"lint --fix\""
+    "lint:fix": "run-s \"lint --fix\"",
+    "playground": "pnpm -C playground run dev"
   },
   "peerDependencies": {
     "@farmfe/core": ">=1",
@@ -90,7 +148,11 @@
     "eslint": "~9.18.0",
     "eslint-plugin-format": "~1.0.1",
     "eslint-plugin-perfectionist": "~4.7.0",
+    "esno": "~4.8.0",
+    "fast-glob": "~3.3.3",
     "npm-run-all2": "~7.0.2",
-    "typescript": "~5.7.3"
+    "tsup": "~8.3.5",
+    "typescript": "~5.7.3",
+    "unplugin": "~2.1.2"
   }
 }
