@@ -14,6 +14,8 @@ export default antfu(
       quotes: 'single',
     },
 
+    type: 'lib',
+
     typescript: true,
 
     yaml: true,
