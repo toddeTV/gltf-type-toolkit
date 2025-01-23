@@ -26,6 +26,8 @@
     "pnpm": "9"
   },
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "run-s \"lint --fix\""
   },
   "dependencies": {
   },
