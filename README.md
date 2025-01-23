@@ -1,10 +1,19 @@
 # gltf-type-toolkit
 
-This plugin generates type-safe GLTF file representations in TypeScript and optimizes the loading and bundling of models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).
+This plugin generates type-safe GLTF file representations in TypeScript and optimizes the loading and bundling of
+models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).
 
 ## Developer Documentation
 
-For development-related information, including setup instructions for contributors, please refer to the [Developer README](./README.dev.md).
+For development-related information, including setup instructions for contributors, please refer to the
+[Developer README](./README.dev.md).
+
+## Sponsoring
+
+If you like this plugin and want to support me, I would be very happy to see you as a sponsor on GitHub ❤️<br>
+You can find the `Sponsor` button on the top right of the
+[GitHub project page](https://github.com/toddeTV/gltf-type-toolkit).<br>
+Thanks a lot for the support <3
 
 ## Attribution/ Contribution
 
