@@ -10,7 +10,7 @@ For development-related information, including setup instructions for contributo
 
 ## Sponsoring
 
-If you like this plugin and want to support me, I would be very happy to see you as a sponsor on GitHub ❤️<br>
+If you like this plugin and want to support us, we would be very happy to see you as a sponsor on GitHub ❤️<br>
 You can find the `Sponsor` button on the top right of the
 [GitHub project page](https://github.com/toddeTV/gltf-type-toolkit).<br>
 Thanks a lot for the support <3
@@ -23,7 +23,7 @@ Project founder & head of project:
 
 Honorable mentions to people that helped this project:
 
-- \[currently none\]
+- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project and the magic behind the core. Thank you <3
 
 Respectable mentions to projects that helped this project:
 

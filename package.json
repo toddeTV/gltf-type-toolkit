@@ -10,6 +10,10 @@
       "name": "Thorsten Seyschab",
       "email": "business@todde.tv",
       "url": "https://todde.tv/"
+    },
+    {
+      "name": "Andreas Fehn",
+      "url": "https://github.com/fehnomenal"
     }
   ],
   "license": "MIT",
