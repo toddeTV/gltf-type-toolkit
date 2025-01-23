@@ -101,7 +101,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch src",
-    "build:fix": "esno scripts/postbuild.ts",
+    "build:post": "esno scripts/postbuild.ts",
     "lint": "eslint .",
     "lint:fix": "run-s \"lint --fix\"",
     "playground": "pnpm -C playground run dev"

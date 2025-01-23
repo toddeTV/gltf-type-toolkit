@@ -8,6 +8,6 @@ export default <Options>{
     'src/*.ts',
   ],
   format: ['cjs', 'esm'],
-  onSuccess: 'npm run build:fix',
+  onSuccess: 'pnpm run build:post',
   splitting: true,
 }
