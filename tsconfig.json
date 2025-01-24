@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "lib": ["esnext", "DOM"],
+    "lib": [
+      "esnext",
+      "DOM"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -9,5 +12,8 @@
     "strictNullChecks": true,
     "esModuleInterop": true
   },
-  "exclude": ["dist", "eslint.config.js"]
+  "exclude": [
+    "dist",
+    "eslint.config.js"
+  ]
 }

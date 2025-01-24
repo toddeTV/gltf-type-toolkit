@@ -5,18 +5,18 @@
 [![bundle size][bundle-size-src]][bundle-size-href]
 [![license][license-src]][license-href]
 
-This plugin generates type-safe GLTF file representations in TypeScript and optimizes the loading and bundling of
+This plugin generates type-safe glTF file representations in TypeScript and optimizes the loading and bundling of
 models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).
 
 ## project overview
 
-This plugin scans all model files in the project source, deconstructs the GLTF JSON representation, and places
-generated type files next to them. It uses [three.js](https://github.com/mrdoob/three.js/) to parse the GLTF files,
+This plugin scans all model files in the project source, deconstructs the glTF JSON representation, and places
+generated type files next to them. It uses [three.js](https://github.com/mrdoob/three.js/) to parse the glTF files,
 including modifications like path resolutions etc.
 
 With this plugin you get:
 
-- ✅ Type safe GLTF file representations with correct inner [three.js](https://github.com/mrdoob/three.js/) types
+- ✅ Type safe glTF file representations with correct inner [three.js](https://github.com/mrdoob/three.js/) types
   like `Object3D`, `Mesh`, etc..
 - ✅ Building will fail if a model is missing due to type-safe workflow.
 - ✅ Only the used models are bundled in the final product, not all included in your dev project.
