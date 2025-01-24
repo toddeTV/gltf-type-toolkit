@@ -96,7 +96,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.md"
   ],
   "engines": {
     "node": "22",
