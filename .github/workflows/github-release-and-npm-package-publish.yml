@@ -19,23 +19,11 @@ jobs:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
         with:
-          ref: dev # branch to checkout
+          ref: main # branch to checkout
           fetch-depth: 0
         
       - name: Get last commit message
         run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
-
-      # - name: Check commit message suffix for `[create-release]`
-      #   id: check_run_suffix_present
-      #   run: |
-      #     if [[ "${{ env.message }}" == *"[create-release]" ]]; then
-      #       echo "Found suffix"
-      #       echo "run_suffix_present=true" >> $GITHUB_OUTPUT
-      #     else
-      #       echo "Found no suffix"
-      #       echo "run_suffix_present=false" >> $GITHUB_OUTPUT
-      #     fi
-      #   shell: bash
 
       - name: Check commit message suffix for `[create-release]`
         id: check_run_suffix_present
@@ -79,7 +67,7 @@ jobs:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
         with:
-          ref: dev # branch to checkout
+          ref: main # branch to checkout
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -97,13 +85,13 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "no-reply@todde.tv"
 
-      - name: Get old `package.json` version
-        id: get_package_version_old
-        run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+      # - name: Get old `package.json` version
+      #   id: get_package_version_old
+      #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
 
       - name: Bump `package.json` version & generate changelog both from conventional commits
         # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: npx changelogen@0.5.7 --output CHANGELOG.md --bump --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
+        run: npx changelogen@0.5.7 --output CHANGELOG.md --bump --no-commit --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -111,39 +99,21 @@ jobs:
         id: get_package_version_new
         run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
 
-      - name: Git add, commit & push changes made to `package.json` & `CHANGELOG.md` to `dev`
+      - name: Git add, commit & push changes made to `package.json` & `CHANGELOG.md` to `main`
         run: |
           git add .
-          git commit -m "chore(release): bump version & update changelog to v${{ steps.get_package_version_new.outputs.version }}"
-          git push origin dev
-      
-      - name: Get commit sha short
-        id: get_commit_sha_short
-        run: echo sha_short=$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT
-          
-      - name: Create a tag
-        run: |
-          git tag -a "xxx${{ steps.get_commit_sha_short.outputs.sha_short }}" -m "Only for the next use of changelogen to find where to start"
-          git push origin --tags
-          
-      - name: Git merge `dev` to `main`
-        run: |
-          git checkout main
-          git pull origin main
-          # git merge origin/dev --strategy=recursive --strategy-option=theirs --no-commit
-          git merge origin/dev --no-ff --no-commit
-          git add .
-          git commit -m "chore(release): merge dev into main with new version v${{ steps.get_package_version_new.outputs.version }}"
+          git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
           git push origin main
-
+      
       - name: Create a tag
         run: |
           git tag -a "v${{ steps.get_package_version_new.outputs.version }}" -m "Release v${{ steps.get_package_version_new.outputs.version }}"
           git push origin --tags
           
       - name: Sync tags with GitHub releases & create the new release
-        run: npx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
+        # run: npx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
         # run: npx changelogen@0.5.7 gh release
+        run: npx changelogen@0.5.7 gh release all
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -161,11 +131,11 @@ jobs:
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}      
 
-      # - name: Publish package to NPM
-      #   # if: github.ref == 'refs/heads/main'
-      #   uses: JS-DevTools/npm-publish@v3
-      #   with:
-      #     token: ${{ secrets.NPM_TOKEN }}
-      #     access: public
-      #     # registry: "https://npm.pkg.github.com/"
-      #     registry: https://registry.npmjs.org/
+      - name: Publish package to NPM
+        # if: github.ref == 'refs/heads/main'
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
+          # registry: "https://npm.pkg.github.com/"
+          registry: https://registry.npmjs.org/
