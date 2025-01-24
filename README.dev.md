@@ -51,7 +51,7 @@ type foo = { bar: 2 }
 
 [Why I don't use Prettier for every file type](https://antfu.me/posts/why-not-prettier)
 
-## changelog
+## GitHub Release & NPM Publishing
 
 Using the suffix `[create-release]` or `[create-release-TYPE]` in a commit message on branch `main` will trigger
 the GitHub workflow (CI action) that:
