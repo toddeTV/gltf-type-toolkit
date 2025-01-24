@@ -21,7 +21,7 @@ jobs:
         with:
           ref: main # branch to checkout
           fetch-depth: 0
-        
+
       - name: Get last commit message
         run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
@@ -53,7 +53,7 @@ jobs:
   dependence-lint:
     name: Depend on Lint
     uses: ./.github/workflows/lint.yml
-  
+
   create_release:
     needs:
       - check_conditions
@@ -74,7 +74,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      
+
       - name: Enable pnpm
         run: |
           corepack enable
@@ -104,19 +104,19 @@ jobs:
           git add .
           git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
           git push origin main
-      
+
       - name: Create a tag
         run: |
           git tag -a "v${{ steps.get_package_version_new.outputs.version }}" -m "Release v${{ steps.get_package_version_new.outputs.version }}"
           git push origin --tags
-          
+
       - name: Sync tags with GitHub releases & create the new release
         # run: npx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
         # run: npx changelogen@0.5.7 gh release
         run: npx changelogen@0.5.7 gh release all
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Install dependencies
         # TODO fix this bc currently using the frozen lockfile will fail due to the patch inside `package.json`
         # run: pnpm install --frozen-lockfile
@@ -124,12 +124,12 @@ jobs:
 
       - name: Build the project
         run: pnpm run build
-      
+
       # - name: Publish package to NPM
       #   if: github.ref == 'refs/heads/main'
       #   run: pnpm publish --access public
       #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}      
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish package to NPM
         # if: github.ref == 'refs/heads/main'
