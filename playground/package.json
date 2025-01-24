@@ -1,5 +1,5 @@
 {
-  "name": "gltf-type-toolkit-playground",
+  "name": "@todde.tv/gltf-type-toolkit-playground",
   "type": "module",
   "private": true,
   "scripts": {

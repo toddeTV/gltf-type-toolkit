@@ -1,9 +1,9 @@
 {
-  "name": "gltf-type-toolkit",
+  "name": "@todde.tv/gltf-type-toolkit",
   "type": "module",
   "version": "1.0.0-rc.0",
   "packageManager": "pnpm@9.15.4",
-  "description": "This plugin generates type-safe GLTF file representations in TypeScript and optimizes the loading and bundling of models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).",
+  "description": "This plugin generates type-safe glTF file representations in TypeScript and optimizes the loading and bundling of models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).",
   "author": "Thorsten Seyschab <business@todde.tv> (https://todde.tv/)",
   "contributors": [
     {
@@ -39,7 +39,8 @@
     "rolldown",
     "vite",
     "esbuild",
-    "rspack"
+    "rspack",
+    "unplugin"
   ],
   "exports": {
     ".": {
@@ -118,9 +119,11 @@
     "@farmfe/core": ">=1",
     "@nuxt/kit": "^3",
     "@nuxt/schema": "^3",
+    "@rspack/core": "^1",
+    "astro": "*",
     "esbuild": "*",
     "rollup": "^3 || ^4",
-    "three": "^0.170.0",
+    "three": ">=0.170.0",
     "vite": ">=3",
     "webpack": "^4 || ^5"
   },
@@ -132,6 +135,12 @@
       "optional": true
     },
     "@nuxt/schema": {
+      "optional": true
+    },
+    "@rspack/core": {
+      "optional": true
+    },
+    "astro": {
       "optional": true
     },
     "esbuild": {
