@@ -1,0 +1,141 @@
+name: Release Creation on GitHub & NPM Publishing
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  check_conditions:
+    name: Check conditions to create & release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      run_suffix_present: ${{ steps.check_run_suffix_present.outputs.run_suffix_present }}
+      run_suffix_force_version: ${{ steps.check_run_suffix_present.outputs.run_suffix_force_version }}
+    steps:
+      - name: Checkout the Codebase
+        uses: actions/checkout@v4
+        with:
+          ref: main # branch to checkout
+          fetch-depth: 0
+
+      - name: Get last commit message
+        run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Check commit message suffix for `[create-release]`
+        id: check_run_suffix_present
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let run_suffix_present = "false";
+            let run_suffix_force_version = "";
+
+            const commitMessage = process.env.message;
+            const regex = /\[create-release(?:-([a-z]+))?\]$/;
+            const match = commitMessage.match(regex);
+
+            if (match) {
+              run_suffix_present = "true";
+              if(match[1]){
+                run_suffix_force_version = `--${match[1]}`
+              }
+            }
+
+            console.dir(`Set output: run_suffix_present=${run_suffix_present}`);
+            core.setOutput("run_suffix_present", run_suffix_present);
+
+            console.dir(`Set output: run_suffix_force_version=${run_suffix_force_version}`);
+            core.setOutput("run_suffix_force_version", run_suffix_force_version);
+
+  dependence-lint:
+    name: Depend on Lint
+    uses: ./.github/workflows/lint.yml
+
+  create_release:
+    needs:
+      - check_conditions
+      - dependence-lint
+    if: needs.check_conditions.outputs.run_suffix_present == 'true'
+    name: Create GitHub Release & NPM Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the Codebase
+        uses: actions/checkout@v4
+        with:
+          ref: main # branch to checkout
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@v9.15.4 --activate
+
+      - name: Init git config for the bot by setting name & email
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "no-reply@todde.tv"
+
+      # - name: Get old `package.json` version
+      #   id: get_package_version_old
+      #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+
+      - name: Bump `package.json` version & generate changelog both from conventional commits
+        # -from "v${{ steps.get_package_version_old.outputs.version }}"
+        run: npx changelogen@0.5.7 --output CHANGELOG.md --bump --no-commit --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Get new `package.json` version
+        id: get_package_version_new
+        run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+
+      - name: Git add, commit & push changes made to `package.json` & `CHANGELOG.md` to `main`
+        run: |
+          git add .
+          git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
+          git push origin main
+
+      - name: Create a tag
+        run: |
+          git tag -a "v${{ steps.get_package_version_new.outputs.version }}" -m "Release v${{ steps.get_package_version_new.outputs.version }}"
+          git push origin --tags
+
+      - name: Sync tags with GitHub releases & create the new release
+        # run: npx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
+        # run: npx changelogen@0.5.7 gh release
+        run: npx changelogen@0.5.7 gh release all
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        # TODO fix this bc currently using the frozen lockfile will fail due to the patch inside `package.json`
+        # run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build the project
+        run: pnpm run build
+
+      # - name: Publish package to NPM
+      #   if: github.ref == 'refs/heads/main'
+      #   run: pnpm publish --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish package to NPM
+        # if: github.ref == 'refs/heads/main'
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
+          # registry: "https://npm.pkg.github.com/"
+          registry: https://registry.npmjs.org/

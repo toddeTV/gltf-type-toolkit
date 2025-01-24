@@ -51,6 +51,31 @@ type foo = { bar: 2 }
 
 [Why I don't use Prettier for every file type](https://antfu.me/posts/why-not-prettier)
 
+## GitHub Release & NPM Publishing
+
+Using the suffix `[create-release]` or `[create-release-TYPE]` in a commit message on branch `main` will trigger
+the GitHub workflow (CI action) that:
+
+- uses `npx changelogen` to analyze the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from
+  the last version to the current commit for:
+  - bumping the version in `package.json` via:
+    - automatically when no `TYPE` is given
+    - manually with a given `TYPE` where the following is possible:
+      - `major`: Bump as a semver-major version
+      - `minor`: Bump as a semver-minor version
+      - `patch`: Bump as a semver-patch version
+      - `premajor`: Bump as a semver-premajor version, can set id with string.
+      - `preminor`: Bump as a semver-preminor version, can set id with string.
+      - `prepatch`: Bump as a semver-prepatch version, can set id with string.
+      - `prerelease`: Bump as a semver-prerelease version, can set id with string.
+  - creating a new changelog entry in `CHANGELOG.md` from the last version to the new version
+- Committing these changes as author `github-actions[bot] <no-reply@todde.tv>` directly on branch `main`
+- Creating a tag at the new version commit on with the version number
+- Creating a GitHub Release out of it
+- Publishing the package into the [NPM Registry](https://registry.npmjs.org/)
+
+You can use `npx changelogen --dry` to generate the new changelog in a dry run to preview in development.
+
 ## Docs and helper websites
 
 \[currently none\]
