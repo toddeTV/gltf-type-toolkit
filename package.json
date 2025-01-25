@@ -157,7 +157,7 @@
     }
   },
   "dependencies": {
-    "three-stdlib": "~2.35.7"
+    "three-stdlib": "~2.35.12"
   },
   "devDependencies": {
     "@antfu/eslint-config": "~3.16.0",
