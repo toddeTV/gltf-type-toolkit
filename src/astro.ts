@@ -9,5 +9,5 @@ export default (options: Options): any => ({
       astro.config.vite.plugins.push(unplugin.vite(options))
     },
   },
-  name: 'gltf-type-toolkit',
+  name: '@todde.tv/gltf-type-toolkit',
 })

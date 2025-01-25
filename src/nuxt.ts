@@ -14,7 +14,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   meta: {
     configKey: 'gltfTypeToolkit',
-    name: 'nuxt-gltf-type-toolkit',
+    name: '@todde.tv/gltf-type-toolkit',
   },
   setup(options, _nuxt) {
     addVitePlugin(() => vite(options))
