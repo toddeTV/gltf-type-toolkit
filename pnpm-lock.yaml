@@ -28,6 +28,9 @@ importers:
       astro:
         specifier: '*'
         version: 5.1.9(@types/node@22.10.9)(jiti@2.4.2)(rollup@4.31.0)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
+      citty:
+        specifier: ~0.1.6
+        version: 0.1.6
       consola:
         specifier: ~3.4.0
         version: 3.4.0

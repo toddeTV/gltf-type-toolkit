@@ -160,6 +160,7 @@
     }
   },
   "dependencies": {
+    "citty": "~0.1.6",
     "consola": "~3.4.0",
     "handlebars": "~4.7.8"
   },
