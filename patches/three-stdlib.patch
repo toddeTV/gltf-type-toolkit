@@ -1,3 +1,153 @@
+diff --git a/loaders/DRACOLoader.cjs b/loaders/DRACOLoader.cjs
+index d957dd8319f97b82f026bc4d8a2cbcf36c9bbb5e..a5561635127e0f0141f68356724e55f03d314de0 100644
+--- a/loaders/DRACOLoader.cjs
++++ b/loaders/DRACOLoader.cjs
+@@ -1,5 +1,6 @@
+ "use strict";
+ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
++const { createDecoderModule } = require("draco3d");
+ const THREE = require("three");
+ const _taskCache = /* @__PURE__ */ new WeakMap();
+ class DRACOLoader extends THREE.Loader {
+@@ -8,7 +9,7 @@ class DRACOLoader extends THREE.Loader {
+     this.decoderPath = "";
+     this.decoderConfig = {};
+     this.decoderBinary = null;
+-    this.decoderPending = null;
++    this.decoderPending = new DRACODecoder();
+     this.workerLimit = 4;
+     this.workerPool = [];
+     this.workerNextTaskID = 1;
+@@ -88,13 +89,13 @@ class DRACOLoader extends THREE.Loader {
+     let worker;
+     const taskID = this.workerNextTaskID++;
+     const taskCost = buffer.byteLength;
+-    const geometryPending = this._getWorker(taskID, taskCost).then((_worker) => {
+-      worker = _worker;
+-      return new Promise((resolve, reject) => {
+-        worker._callbacks[taskID] = { resolve, reject };
+-        worker.postMessage({ type: "decode", id: taskID, taskConfig, buffer }, [buffer]);
+-      });
+-    }).then((message) => this._createGeometry(message.geometry));
++    const geometryPending = this.decoderPending.onmessage({
++      data: {
++        type: 'decode',
++        buffer,
++        taskConfig,
++      },
++    }).then((geometry) => this._createGeometry(geometry));
+     geometryPending.catch(() => true).then(() => {
+       if (worker && taskID) {
+         this._releaseTask(worker, taskID);
+@@ -130,7 +131,6 @@ class DRACOLoader extends THREE.Loader {
+     });
+   }
+   preload() {
+-    this._initDecoder();
+     return this;
+   }
+   _initDecoder() {
+@@ -213,10 +213,12 @@ class DRACOLoader extends THREE.Loader {
+     return this;
+   }
+ }
+-function DRACOWorker() {
+-  let decoderConfig;
+-  let decoderPending;
+-  onmessage = function(e) {
++class DRACODecoder {
++  decoderModulePending;
++  constructor() {
++    this.decoderModulePending = createDecoderModule();
++  }
++  onmessage(e) {
+     const message = e.data;
+     switch (message.type) {
+       case "init":
+@@ -231,20 +233,12 @@ function DRACOWorker() {
+       case "decode":
+         const buffer = message.buffer;
+         const taskConfig = message.taskConfig;
+-        decoderPending.then((module2) => {
+-          const draco = module2.draco;
++        return this.decoderModulePending.then((draco) => {
+           const decoder = new draco.Decoder();
+           const decoderBuffer = new draco.DecoderBuffer();
+           decoderBuffer.Init(new Int8Array(buffer), buffer.byteLength);
+           try {
+-            const geometry = decodeGeometry(draco, decoder, decoderBuffer, taskConfig);
+-            const buffers = geometry.attributes.map((attr) => attr.array.buffer);
+-            if (geometry.index)
+-              buffers.push(geometry.index.array.buffer);
+-            self.postMessage({ type: "decode", id: message.id, geometry }, buffers);
+-          } catch (error) {
+-            console.error(error);
+-            self.postMessage({ type: "error", id: message.id, error: error.message });
++            return this.decodeGeometry(draco, decoder, decoderBuffer, taskConfig);
+           } finally {
+             draco.destroy(decoderBuffer);
+             draco.destroy(decoder);
+@@ -253,7 +247,7 @@ function DRACOWorker() {
+         break;
+     }
+   };
+-  function decodeGeometry(draco, decoder, decoderBuffer, taskConfig) {
++  decodeGeometry(draco, decoder, decoderBuffer, taskConfig) {
+     const attributeIDs = taskConfig.attributeIDs;
+     const attributeTypes = taskConfig.attributeTypes;
+     let dracoGeometry;
+@@ -273,7 +267,7 @@ function DRACOWorker() {
+     }
+     const geometry = { index: null, attributes: [] };
+     for (const attributeName in attributeIDs) {
+-      const attributeType = self[attributeTypes[attributeName]];
++      const attributeType = global[attributeTypes[attributeName]];
+       let attribute;
+       let attributeID;
+       if (taskConfig.useUniqueIDs) {
+@@ -285,15 +279,15 @@ function DRACOWorker() {
+           continue;
+         attribute = decoder.GetAttribute(dracoGeometry, attributeID);
+       }
+-      geometry.attributes.push(decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute));
++      geometry.attributes.push(this.decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute));
+     }
+     if (geometryType === draco.TRIANGULAR_MESH) {
+-      geometry.index = decodeIndex(draco, decoder, dracoGeometry);
++      geometry.index = this.decodeIndex(draco, decoder, dracoGeometry);
+     }
+     draco.destroy(dracoGeometry);
+     return geometry;
+   }
+-  function decodeIndex(draco, decoder, dracoGeometry) {
++  decodeIndex(draco, decoder, dracoGeometry) {
+     const numFaces = dracoGeometry.num_faces();
+     const numIndices = numFaces * 3;
+     const byteLength = numIndices * 4;
+@@ -303,12 +297,12 @@ function DRACOWorker() {
+     draco._free(ptr);
+     return { array: index, itemSize: 1 };
+   }
+-  function decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute) {
++  decodeAttribute(draco, decoder, dracoGeometry, attributeName, attributeType, attribute) {
+     const numComponents = attribute.num_components();
+     const numPoints = dracoGeometry.num_points();
+     const numValues = numPoints * numComponents;
+     const byteLength = numValues * attributeType.BYTES_PER_ELEMENT;
+-    const dataType = getDracoDataType(draco, attributeType);
++    const dataType = this.getDracoDataType(draco, attributeType);
+     const ptr = draco._malloc(byteLength);
+     decoder.GetAttributeDataArrayForAllPoints(dracoGeometry, attribute, dataType, byteLength, ptr);
+     const array = new attributeType(draco.HEAPF32.buffer, ptr, numValues).slice();
+@@ -319,7 +313,7 @@ function DRACOWorker() {
+       itemSize: numComponents
+     };
+   }
+-  function getDracoDataType(draco, attributeType) {
++  getDracoDataType(draco, attributeType) {
+     switch (attributeType) {
+       case Float32Array:
+         return draco.DT_FLOAT32;
 diff --git a/loaders/DRACOLoader.js b/loaders/DRACOLoader.js
 index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..b3ea813413c2fde835bd9d630b12113c35dda72a 100644
 --- a/loaders/DRACOLoader.js
@@ -146,6 +296,34 @@ index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..b3ea813413c2fde835bd9d630b12113c
      switch (attributeType) {
        case Float32Array:
          return draco.DT_FLOAT32;
+diff --git a/loaders/GLTFLoader.cjs b/loaders/GLTFLoader.cjs
+index 15aba5027f97e93b048e9738b45ea8b7e2193b0d..30f8e250a35f65eb5e4789d5a27f8f40beeee56d 100644
+--- a/loaders/GLTFLoader.cjs
++++ b/loaders/GLTFLoader.cjs
+@@ -1,5 +1,7 @@
+ "use strict";
+ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
++const { readFile } = require("node:fs/promises");
++const { join } = require("node:path");
+ const THREE = require("three");
+ const BufferGeometryUtils = require("../utils/BufferGeometryUtils.cjs");
+ const constants = require("../_polyfill/constants.cjs");
+@@ -1632,6 +1634,7 @@ class GLTFParser {
+     if (bufferDef.uri === void 0 && bufferIndex === 0) {
+       return Promise.resolve(this.extensions[EXTENSIONS.KHR_BINARY_GLTF].body);
+     }
++    return readFile(join(this.options.path, bufferDef.uri));
+     const options = this.options;
+     return new Promise(function(resolve, reject) {
+       loader.load(THREE.LoaderUtils.resolveURL(bufferDef.uri, options.path), resolve, void 0, function() {
+@@ -1794,6 +1797,7 @@ class GLTFParser {
+     return promise;
+   }
+   loadImageSource(sourceIndex, loader) {
++    return Promise.resolve(null);
+     const parser = this;
+     const json = this.json;
+     const options = this.options;
 diff --git a/loaders/GLTFLoader.js b/loaders/GLTFLoader.js
 index 851226bb4c491b990459cae65009113035f200cc..f1dd2991c9d88adf6ae1b6bfff5f85350d6b891e 100644
 --- a/loaders/GLTFLoader.js
