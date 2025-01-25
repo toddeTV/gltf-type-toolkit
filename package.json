@@ -96,6 +96,9 @@
       ]
     }
   },
+  "bin": {
+    "generate-gltf-types": "dist/cli.js"
+  },
   "files": [
     "CHANGELOG.md",
     "LICENSE.md",

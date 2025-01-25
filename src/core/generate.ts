@@ -29,8 +29,8 @@ export async function generateModelTypes(
   const parsedGltf = await parseGltfModel(gltfLoader, modelFile)
   const analysis = analyzeGltfModel(parsedGltf)
 
-  const declarationFile = resolve(modelFile, `../${basename(modelFile)}.d.ts`)
-  const runtimeFile = resolve(modelFile, `../${basename(modelFile)}.js`)
+  const declarationFile = resolve(dirname(modelFile), `${basename(modelFile)}.d.ts`)
+  const runtimeFile = resolve(dirname(modelFile), `${basename(modelFile)}.js`)
 
   await Promise.all([
     (() => {
