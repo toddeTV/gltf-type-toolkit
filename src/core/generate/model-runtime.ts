@@ -4,10 +4,10 @@ import './handlebars.js'
 
 export function generateModelRuntime(
   { imports, scenes }: GltfAnalysis,
+  relativeGltfPath: string,
+  gltfLoaderPath: string,
   identifiers: {
-    pathSymbol: string
     nodeGetter: string
-    modelVariable: string
   },
 ): string {
   let nodeName = 'node'
@@ -17,6 +17,8 @@ export function generateModelRuntime(
   }
 
   return runtime({
+    gltfLoaderPath: JSON.stringify(gltfLoaderPath),
+    gltfPath: JSON.stringify(relativeGltfPath),
     identifiers: { ...identifiers, nodeName },
     imports: imports.toTemplateData(false),
     scenes,

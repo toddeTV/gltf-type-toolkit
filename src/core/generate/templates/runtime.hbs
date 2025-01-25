@@ -1,23 +1,31 @@
 {{> imports.hbs}}
+import gltf from {{gltfPath}};
+import gltfLoader from {{gltfLoaderPath}};
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
-const {{identifiers.pathSymbol}} = Symbol();
+const node = Symbol();
 
 {{#each scenes}}
 {{!-- This generates the type of the node accessor data structure. --}}
 export const {{name}} = {
-  {{!-- We need to pass the PARENT identifiers down because we are now inside another context due to each. --}}
-  {{!-- Also create the initial indices array. --}}
-  {{> node_spec/children.hbs this identifiers=../identifiers indices=(singleton index) separator=","}}
+  {{!-- We need to create the initial indices array. --}}
+  {{> node_spec/children.hbs this indices=(singleton index) separator=","}}
 };
 
 {{/each}}
 {{> node_getter/fn_prefix.hbs async=true identifiers=identifiers}}(spec) {
   {{!-- Pretend that the complete model is also a `Object3D` to allow uniform access. --}}
-  let {{identifiers.nodeName}} = { children: (await {{identifiers.modelVariable}}).scenes };
-  for (const idx of spec[{{identifiers.pathSymbol}}]) {
+  let {{identifiers.nodeName}} = { children: (await loadModel()).scenes };
+  for (const idx of spec[node]) {
     {{identifiers.nodeName}} = {{identifiers.nodeName}}.children[idx];
   }
 
   return {{identifiers.nodeName}};
+}
+
+async function loadModel() {
+  {{!-- The base path needs to be empty. At runtime it is prefixed to the referenced file path. --}}
+  {{!-- During dev this is a relative path inside the project root. --}}
+  {{!-- After building this is a root absolute path. --}}
+  return await gltfLoader.parseAsync(gltf, '');
 }

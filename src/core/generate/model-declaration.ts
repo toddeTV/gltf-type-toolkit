@@ -5,7 +5,6 @@ import './handlebars.js'
 export function generateModelDeclaration(
   { imports, scenes }: GltfAnalysis,
   identifiers: {
-    pathSymbol: string
     nodeGetter: string
   },
 ): string {
