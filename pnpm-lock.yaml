@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   three-stdlib:
-    hash: avhsg2w6sbde7wfqz7rnmkocva
+    hash: bk5gzshvqlyalixxgtfdvusofa
     path: patches/three-stdlib.patch
 
 importers:
@@ -36,7 +36,7 @@ importers:
         version: 4.31.0
       three-stdlib:
         specifier: ~2.35.12
-        version: 2.35.12(patch_hash=avhsg2w6sbde7wfqz7rnmkocva)(three@0.172.0)
+        version: 2.35.12(patch_hash=bk5gzshvqlyalixxgtfdvusofa)(three@0.172.0)
       vite:
         specifier: '>=3'
         version: 6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
@@ -8636,7 +8636,7 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  three-stdlib@2.35.12(patch_hash=avhsg2w6sbde7wfqz7rnmkocva)(three@0.172.0):
+  three-stdlib@2.35.12(patch_hash=bk5gzshvqlyalixxgtfdvusofa)(three@0.172.0):
     dependencies:
       '@types/draco3d': 1.4.10
       '@types/offscreencanvas': 2019.7.3

@@ -147,23 +147,24 @@ index 43ca01558bbf0fffbfcebe85c2eabd962537a94e..b3ea813413c2fde835bd9d630b12113c
        case Float32Array:
          return draco.DT_FLOAT32;
 diff --git a/loaders/GLTFLoader.js b/loaders/GLTFLoader.js
-index 851226bb4c491b990459cae65009113035f200cc..3caf042194f46e605fb6eb26a70cb27e400b6c47 100644
+index 851226bb4c491b990459cae65009113035f200cc..f1dd2991c9d88adf6ae1b6bfff5f85350d6b891e 100644
 --- a/loaders/GLTFLoader.js
 +++ b/loaders/GLTFLoader.js
-@@ -1,3 +1,4 @@
+@@ -1,3 +1,5 @@
 +import { readFile } from "node:fs/promises";
++import { join } from "node:path";
  import { Loader, LoaderUtils, FileLoader, Color, SpotLight, PointLight, DirectionalLight, MeshBasicMaterial, MeshPhysicalMaterial, Vector2, Matrix4, Vector3, Quaternion, InstancedMesh, InstancedBufferAttribute, Object3D, TextureLoader, ImageBitmapLoader, BufferAttribute, InterleavedBuffer, InterleavedBufferAttribute, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, PointsMaterial, Material, LineBasicMaterial, MeshStandardMaterial, DoubleSide, PropertyBinding, BufferGeometry, SkinnedMesh, Mesh, TriangleStripDrawMode, TriangleFanDrawMode, LineSegments, Line, LineLoop, Points, Group, PerspectiveCamera, MathUtils, OrthographicCamera, Skeleton, AnimationClip, Bone, InterpolateLinear, NearestFilter, NearestMipmapNearestFilter, LinearMipmapNearestFilter, NearestMipmapLinearFilter, ClampToEdgeWrapping, MirroredRepeatWrapping, InterpolateDiscrete, FrontSide, Texture, VectorKeyframeTrack, NumberKeyframeTrack, QuaternionKeyframeTrack, Box3, Sphere, Interpolant } from "three";
  import { toTrianglesDrawMode } from "../utils/BufferGeometryUtils.js";
  import { version } from "../_polyfill/constants.js";
-@@ -1630,6 +1631,7 @@ class GLTFParser {
+@@ -1630,6 +1632,7 @@ class GLTFParser {
      if (bufferDef.uri === void 0 && bufferIndex === 0) {
        return Promise.resolve(this.extensions[EXTENSIONS.KHR_BINARY_GLTF].body);
      }
-+    return readFile(LoaderUtils.resolveURL(bufferDef.uri, this.options.path));
++    return readFile(join(this.options.path, bufferDef.uri));
      const options = this.options;
      return new Promise(function(resolve, reject) {
        loader.load(LoaderUtils.resolveURL(bufferDef.uri, options.path), resolve, void 0, function() {
-@@ -1792,6 +1794,7 @@ class GLTFParser {
+@@ -1792,6 +1795,7 @@ class GLTFParser {
      return promise;
    }
    loadImageSource(sourceIndex, loader) {
