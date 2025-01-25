@@ -13,8 +13,8 @@ export default defineNuxtModule<ModuleOptions>({
     // ...default options
   },
   meta: {
-    configKey: 'unpluginStarter',
-    name: 'nuxt-unplugin-starter',
+    configKey: 'gltfTypeToolkit',
+    name: 'nuxt-gltf-type-toolkit',
   },
   setup(options, _nuxt) {
     addVitePlugin(() => vite(options))
