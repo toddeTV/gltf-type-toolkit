@@ -5,12 +5,10 @@ import webpack from './webpack.js'
 import '@nuxt/schema'
 
 export interface ModuleOptions extends Options {
-
 }
 
 export default defineNuxtModule<ModuleOptions>({
   defaults: {
-    // ...default options
   },
   meta: {
     configKey: 'gltfTypeToolkit',
@@ -19,7 +17,5 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, _nuxt) {
     addVitePlugin(() => vite(options))
     addWebpackPlugin(() => webpack(options))
-
-    // ...
   },
 })
