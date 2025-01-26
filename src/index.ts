@@ -3,7 +3,7 @@ import type { Options } from './types'
 import { createUnplugin } from 'unplugin'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = options => ({
-  name: 'unplugin-starter',
+  name: '@todde.tv/gltf-type-toolkit',
   transform(code) {
     return code.replace('__UNPLUGIN__', `Hello Unplugin! ${options}`)
   },
