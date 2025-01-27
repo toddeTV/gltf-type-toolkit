@@ -28,3 +28,5 @@ jobs:
             });
             console.dir(commit.data.commit.message);
             console.dir(commit);
+            console.dir(context.sha);
+            console.dir(context);
