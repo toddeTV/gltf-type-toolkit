@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  three-stdlib:
+    hash: 5f6bxrj4z22jeteiqg3abdmvre
+    path: patches/three-stdlib.patch
+
 importers:
 
   .:
@@ -23,6 +28,9 @@ importers:
       astro:
         specifier: '*'
         version: 5.1.9(@types/node@22.10.9)(jiti@2.4.2)(rollup@4.31.0)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
+      draco3d:
+        specifier: ^1.5.7
+        version: 1.5.7
       esbuild:
         specifier: '*'
         version: 0.24.2
@@ -32,9 +40,6 @@ importers:
       rollup:
         specifier: ^3 || ^4
         version: 4.31.0
-      three:
-        specifier: '>=0.170.0'
-        version: 0.170.0
       vite:
         specifier: '>=3'
         version: 6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
@@ -69,9 +74,12 @@ importers:
       npm-run-all2:
         specifier: ~7.0.2
         version: 7.0.2
+      three:
+        specifier: ~0.172.0
+        version: 0.172.0
       three-stdlib:
         specifier: ~2.35.12
-        version: 2.35.12(three@0.170.0)
+        version: 2.35.12(patch_hash=5f6bxrj4z22jeteiqg3abdmvre)(three@0.172.0)
       tsup:
         specifier: ~8.3.5
         version: 8.3.5(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
@@ -217,6 +225,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.26.7':
+    resolution: {integrity: sha512-kEvgGGgEjRUutvdVvZhbn/BxVt+5VSpwXz1j3WYXQbXDo8KzFOPNG2GQbdAiNq8g6wn1yKk7C/qrke03a84V+w==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/runtime@7.26.0':
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
     engines: {node: '>=6.9.0'}
@@ -235,6 +248,10 @@ packages:
 
   '@babel/types@7.26.5':
     resolution: {integrity: sha512-L6mZmwFDK6Cjh1nRCLXpa6no13ZIioJDz7mdkzHv399pThrTa/k0nUlNaenOeh2kWu/iaOQYElEpKPUswUa9Vg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.26.7':
+    resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
 
   '@changesets/apply-release-plan@7.0.7':
@@ -3852,8 +3869,8 @@ packages:
     peerDependencies:
       three: '>=0.128.0'
 
-  three@0.170.0:
-    resolution: {integrity: sha512-FQK+LEpYc0fBD+J8g6oSEyyNzjp+Q7Ks1C568WWaoMRLW+TkNNWmenWeGgJjV105Gd+p/2ql1ZcjYvNiPZBhuQ==}
+  three@0.172.0:
+    resolution: {integrity: sha512-6HMgMlzU97MsV7D/tY8Va38b83kz8YJX+BefKjspMNAv0Vx6dxMogHOrnRl/sbMIs3BPUKijPqDqJ/+UwJbIow==}
 
   tinyexec@0.3.2:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
@@ -4558,6 +4575,10 @@ snapshots:
     dependencies:
       '@babel/types': 7.26.5
 
+  '@babel/parser@7.26.7':
+    dependencies:
+      '@babel/types': 7.26.7
+
   '@babel/runtime@7.26.0':
     dependencies:
       regenerator-runtime: 0.14.1
@@ -4583,6 +4604,11 @@ snapshots:
       - supports-color
 
   '@babel/types@7.26.5':
+    dependencies:
+      '@babel/helper-string-parser': 7.25.9
+      '@babel/helper-validator-identifier': 7.25.9
+
+  '@babel/types@7.26.7':
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
@@ -5610,7 +5636,7 @@ snapshots:
 
   '@vue/compiler-core@3.5.13':
     dependencies:
-      '@babel/parser': 7.26.5
+      '@babel/parser': 7.26.7
       '@vue/shared': 3.5.13
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -5623,7 +5649,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
-      '@babel/parser': 7.26.5
+      '@babel/parser': 7.26.7
       '@vue/compiler-core': 3.5.13
       '@vue/compiler-dom': 3.5.13
       '@vue/compiler-ssr': 3.5.13
@@ -8643,7 +8669,7 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
-  three-stdlib@2.35.12(three@0.170.0):
+  three-stdlib@2.35.12(patch_hash=5f6bxrj4z22jeteiqg3abdmvre)(three@0.172.0):
     dependencies:
       '@types/draco3d': 1.4.10
       '@types/offscreencanvas': 2019.7.3
@@ -8651,9 +8677,9 @@ snapshots:
       draco3d: 1.5.7
       fflate: 0.6.10
       potpack: 1.0.2
-      three: 0.170.0
+      three: 0.172.0
 
-  three@0.170.0: {}
+  three@0.172.0: {}
 
   tinyexec@0.3.2: {}
 

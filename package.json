@@ -123,6 +123,7 @@
     "@nuxt/schema": "^3",
     "@rspack/core": "^1",
     "astro": "*",
+    "draco3d": "^1.5.7",
     "esbuild": "*",
     "rollup": "^3 || ^4",
     "three": ">=0.170.0",
@@ -171,9 +172,15 @@
     "esno": "~4.8.0",
     "fast-glob": "~3.3.3",
     "npm-run-all2": "~7.0.2",
+    "three": "~0.172.0",
     "three-stdlib": "~2.35.12",
     "tsup": "~8.3.5",
     "typescript": "~5.7.3",
     "unplugin": "~2.1.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "three-stdlib": "patches/three-stdlib.patch"
+    }
   }
 }
