@@ -1,8 +1,0 @@
-import gltfJson from {{{relativeGltfPath}}};
-
-async function loadModel() {
-  {{!-- The base path needs to be empty. At runtime it is prefixed to the referenced file path. --}}
-  {{!-- During dev this is a relative path inside the project root. --}}
-  {{!-- After building this is a root absolute path. --}}
-  return await gltfLoader.parseAsync(gltfJson, '');
-}

@@ -1,5 +1,6 @@
 {{> imports.hbs}}
 import gltfLoader from {{{gltfLoaderPath}}};
+import gltfPath from {{{relativeGltfPath}}};
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
 const path = Symbol();
@@ -22,9 +23,6 @@ export const {{name}} = {
   return {{identifiers.nodeName}};
 }
 
-{{#if gltfIsBinary}}
-{{> load_model/binary.hbs}}
-{{/if}}
-{{#if gltfIsSeparate}}
-{{> load_model/separate.hbs}}
-{{/if}}
+async function loadModel() {
+  return await gltfLoader.loadAsync(gltfPath);
+}

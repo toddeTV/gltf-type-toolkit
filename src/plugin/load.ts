@@ -1,13 +1,15 @@
-import type { Buffer } from 'node:buffer'
 import type { UnpluginBuildContext, UnpluginOptions } from 'unplugin'
 import type { Options } from '../types.js'
+import { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
-import { dirname, parse, relative, resolve } from 'node:path'
+import { basename, dirname, parse, relative, resolve } from 'node:path'
 import { cwd } from 'node:process'
 import { xxh3 } from '@node-rs/xxhash'
-import { BINARY_GLTF_MODEL_EXTENSION, SEPARATE_GLTF_MODEL_EXTENSION } from '../core/constants.js'
+import { BINARY_GLTF_MODEL_EXTENSION, JSON_LOAD_MARKER, SEPARATE_GLTF_MODEL_EXTENSION } from '../core/constants.js'
 import { handleReferencedModelFiles, isGltfModelFile } from '../core/utils/find-models.js'
 import { isBuild } from './dev.js'
+
+// TODO: Do we have to handle base paths when building file paths? Can we even get it in bundler-agnostic way?
 
 export function loadInclude(id: string): boolean {
   // This is needed for some bundlers even though stated otherwise by the documentation...
@@ -26,34 +28,43 @@ export const createLoad: (options: Options | undefined) => UnpluginOptions['load
 }
 
 async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string): Promise<{ code: string }> {
-  if (isBuild()) {
-    // For build we need to emit the binary file and return the file name of the file inside the bundle.
+  // TODO: Parse the binary for the json contents and process them like below.
+  // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
+  // which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
+  // embedded binary buffer which must be the second chunk.
+  // For now we assume that a binary model file does NOT reference external files.
 
-    // TODO: Parse the binary for the json contents and process them like below.
-    // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
-    // which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
-    // embedded binary buffer which must be the second chunk.
-    // For now we assume that a binary model file does NOT reference external files.
-
-    const source = await readFile(modelFile)
-
-    const fileName = emitAssetFile.call(this, modelFile, source)
-
-    return {
-      code: `export default ${JSON.stringify(fileName)};`,
-    }
-  }
-
-  // For dev we only need to return the path to the file RELATIVE to the project dir.
+  const path = await getRelativePathToFile.call(this, modelFile)
 
   return {
-    code: `export default ${JSON.stringify(relative(cwd(), modelFile))};`,
+    code: `export default ${JSON.stringify(path)};`,
   }
 }
 
 async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: string): Promise<{ code: string }> {
-  const rawGltf = JSON.parse(await readFile(modelFile, { encoding: 'utf8' }))
+  let path: string
 
+  if (isBuild()) {
+    // During build emit the (potentially altered) json.
+
+    const rawGltf = JSON.parse(await readFile(modelFile, { encoding: 'utf8' }))
+
+    await handleGltfJson.call(this, rawGltf, modelFile)
+
+    path = emitAssetFile.call(this, modelFile, Buffer.from(JSON.stringify(rawGltf)))
+  }
+  else {
+    // During dev return the original path with specifier to load it later.
+
+    path = relative(cwd(), modelFile) + JSON_LOAD_MARKER
+  }
+
+  return {
+    code: `export default ${JSON.stringify(path)};`,
+  }
+}
+
+async function handleGltfJson(this: UnpluginBuildContext, rawGltf: object, modelFile: string): Promise<void> {
   // The json can reference other files. We need to resolve them to other paths so the build tools can correctly resolve
   // them.
   await handleReferencedModelFiles(rawGltf, async ({ setUri, uri }) => {
@@ -62,26 +73,27 @@ async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: stri
 
     const absoluteUri = resolve(dirname(modelFile), uri)
 
-    if (isBuild()) {
-      // During build the file should be bundled. So we need to emit it and replace the uri inside the json with the
-      // path of the file inside the bundle.
+    const newUri = await getRelativePathToFile.call(this, absoluteUri)
 
-      const source = await readFile(absoluteUri)
+    // Take the basename because we assume that in the end this is placed next to the main model file.
 
-      const fileName = emitAssetFile.call(this, absoluteUri, source)
-
-      // TODO: Do we have to handle a base path here? Can we even get it in bundler-agnostic way?
-      setUri(fileName)
-    }
-    else {
-      // For dev we need to set the RELATIVE path to the project dir.
-
-      setUri(relative(cwd(), absoluteUri))
-    }
+    setUri(basename(newUri))
   })
+}
 
-  return {
-    code: `export default ${JSON.stringify(rawGltf)};`,
+async function getRelativePathToFile(this: UnpluginBuildContext, absolutePath: string): Promise<string> {
+  if (isBuild()) {
+    // During build the file should be bundled. So we need to emit it and replace the uri inside the json with the
+    // path of the file inside the bundle.
+
+    const source = await readFile(absolutePath)
+
+    return emitAssetFile.call(this, absolutePath, source)
+  }
+  else {
+    // For dev we need to set the RELATIVE path to the project dir.
+
+    return relative(cwd(), absolutePath)
   }
 }
 
