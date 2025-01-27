@@ -25,23 +25,25 @@ With this plugin you get:
 - ✅ Works with glTF Seperate (`.gltf` + `.bin` + textures) and glTF Embedded (only `.gltf`) files,
   see [glTF versions and representations](#gltf-versions-and-representations) below for more information.
 - ✅ ESM ready.
-- ✅ Bundler agnostic thanks to [Unplugin](https://github.com/unjs/unplugin), so use it with your favorite one, but
-  see chapter [Bundler and Framework Compatibility](#bundler-and-framework-compatibility) below for more details:
-  - [Vite](https://vitejs.dev/)
-  - [Rollup](https://rollupjs.org/)
-  - [Webpack](https://webpack.js.org/)
-  - [esbuild](https://esbuild.github.io/)
-  - [Rspack](https://www.rspack.dev/)
-  - [Rolldown](https://rolldown.rs/)
-  - [Farm](https://www.farmfe.org/)
-  - And every framework build on top of them.
-- ✅ Use with your loved framework like:
-  - [Vue3](https://vuejs.org/)
-  - [Nuxt3](https://nuxt.com/)
-  - [Svelte](https://svelte.dev/)
-  - [React](https://react.dev/)
+- ⚠️ Build tool & bundler agnostic thanks to [Unplugin](https://github.com/unjs/unplugin), so use it with your
+  favorite one, but see chapter
+  [Build Tool, Bundler and Framework Compatibility](#build-tool-bundler-and-framework-compatibility)
+  below for more details like compatibility or known problems:
   - [Astro](https://astro.build/)
-  - And oll frameworks build on top of the listed bundlers above.
+  - [esbuild](https://esbuild.github.io/)
+  - [Farm](https://www.farmfe.org/)
+  - [Nuxt3](https://nuxt.com/)
+  - [Rollup](https://rollupjs.org/)
+  - [Rspack](https://www.rspack.dev/)
+  - [Vite](https://vitejs.dev/)
+  - [Webpack](https://webpack.js.org/)
+  - [Rolldown](https://rolldown.rs/)
+  - And every framework build on top of them.
+- ✅ Use it with your favorite framework built on top of the listed build tools above, such as:
+  - [React](https://react.dev/)
+  - [Svelte](https://svelte.dev/)
+  - [Vue3](https://vuejs.org/)
+  - ...
 
 It will run when your dev server starts and also when you build your project.
 
@@ -75,7 +77,7 @@ For development-related information, including setup instructions for contributo
    *.gltf.d.ts
    *.gltf.js
    ```
-3. Add the plugin to your bundler, for example with [Vite](https://vitejs.dev/):
+3. Add the plugin to your build tool, for example with [Vite](https://vitejs.dev/):
 
    ```ts
    // vite.config.ts
@@ -137,29 +139,35 @@ to different folders, changing paths, or adjusting how the model is handled afte
    innerModel.castShadow = true
    ```
 
-## Bundler and Framework Compatibility
+## Build Tool, Bundler and Framework Compatibility
 
-Thanks to [Unplugin](https://github.com/unjs/unplugin), we support a wide variety of bundlers and frameworks,
+Thanks to [Unplugin](https://github.com/unjs/unplugin), we support a wide variety of build tools and bundlers,
 resulting in the following compatibility in our project:
 
 (Legend: 🟢 Tested & Supported | 🟡 not yet tested | 🔴 Not Supported)
 
-| Bundler  | Status | Note                                                                      |
-| -------- | ------ | ------------------------------------------------------------------------- |
-| vite     | 🟢     |                                                                           |
-| esbuild  | 🟢     |                                                                           |
-| rollup   | 🟢     |                                                                           |
-| webpack  | 🟢     |                                                                           |
-| rspack   | 🟢     |                                                                           |
-| astro    | 🟡     |                                                                           |
-| nuxt     | 🟡     |                                                                           |
-| rolldown | 🟡     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin) |
-| farm     | 🔴     | Tested & not working, help is welcome                                     |
+| Build Tool                            | Status | Note                                                                      |
+| ------------------------------------- | ------ | ------------------------------------------------------------------------- |
+| [esbuild](https://esbuild.github.io/) | 🟢     |                                                                           |
+| [Rollup](https://rollupjs.org/)       | 🟢     |                                                                           |
+| [Rspack](https://www.rspack.dev/)     | 🟢     |                                                                           |
+| [Vite](https://vitejs.dev/)           | 🟢     |                                                                           |
+| [Webpack](https://webpack.js.org/)    | 🟢     |                                                                           |
+| [Astro](https://astro.build/)         | 🟡     |                                                                           |
+| [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                           |
+| [Rolldown](https://rolldown.rs/)      | 🟡     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin) |
+| [Farm](https://www.farmfe.org/)       | 🔴     | Tested & not working, help is welcome <3                                  |
 
 ## glTF versions and representations
 
-We only support glTF 2.0, so use glTF Seperate (`.gltf` + `.bin` + textures) or glTF Embedded (only `.gltf`) files.<br>
-We do not support glTF 1 nor glTF Binary (`.glb`) files.
+(Legend: 🟢 Tested & Supported | 🟡 not yet tested | 🔴 Not Supported)
+
+| glTF version | file representation                    | Status | Note                                                                                                                                                                |
+| ------------ | -------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| glTF 1.0     | any                                    | 🔴     | glTF 2.0 was introduced in 2017, bringing significant improvements over its predecessor. Make sure you avoid using the outdated glTF 1.0 standard in your projects. |
+| glTF 2.0     | Seperate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Enable better performance, version control, caching, transferring, and debugging.                                                                      |
+| glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as `uri:` data sources using base64 encoding.                                                                    |
+| glTF 2.0     | Binary (`.glb`)                        | 🟢     | Currently not supported bc we scan the JSON encoded `.gltf` files for building the types and can currently not open the binary representation. Help is welcome <3   |
 
 ## Draco Compression handling
 
@@ -211,16 +219,17 @@ scene/ model graph, we store the paths in the graph by caching the child indices
 object. With this, we can O(1) look up what the user requests without the need of traversing - neither depth first
 (default approach from [three.js](https://github.com/mrdoob/three.js/)), nor breath first.
 
-One of the biggest challenges was making the plugin bundler agnostic bc not every bundler handles inner path references
-the same. Therefore, we have to reconstruct the buffers that link the glTF file with the binary and textures by text
-string & replace - kinda hacky, but reliable and the additional runtime is only performed in dev and build, not in the
-production runtime.
+One of the biggest challenges was making the plugin build tool agnostic bc not every build tool handles inner path
+references the same. Therefore, we have to reconstruct the buffers that link the glTF file with the binary and
+textures by text string & replace - kinda hacky, but reliable and the additional runtime is only performed in dev
+and build, not in the production runtime.
 
-## Troubleshooting
+## Troubleshooting with Known Problems and Limitations
 
 If you have problems, maybe one of the following will help:
 
 - Delete your build output folder (maybe some old builds copied model files in there and our plugin is now scanning them).
+- We currently do not provide a watcher. Restart your dev environment when changing model files.
 
 ## Attribution/ Contribution
 
@@ -230,7 +239,8 @@ Project founder & head of project:
 
 Honorable mentions to people that helped this project:
 
-- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project and the magic behind the core. Thank you <3
+- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project and the magic
+  behind the core. Thank you <3
 
 Respectable mentions to projects that helped this project:
 
