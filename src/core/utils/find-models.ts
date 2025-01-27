@@ -1,5 +1,5 @@
-import { readdir, readFile } from 'node:fs/promises'
-import { dirname, join, resolve } from 'node:path'
+import { readdir } from 'node:fs/promises'
+import { join } from 'node:path'
 import { GLTF_MODEL_EXTENSIONS } from '../constants.js'
 
 export async function findAllModelsInDir(dir: string): Promise<string[]> {
@@ -8,18 +8,6 @@ export async function findAllModelsInDir(dir: string): Promise<string[]> {
   return entries
     .filter(e => GLTF_MODEL_EXTENSIONS.some(ext => e.name.endsWith(ext)))
     .map(entry => join(entry.parentPath, entry.name))
-}
-
-export async function getReferencedModelFiles(modelFile: string): Promise<string[]> {
-  const rawGltf = JSON.parse(await readFile(modelFile, { encoding: 'utf8' }))
-
-  const referencedFiles: string[] = []
-
-  await handleReferencedModelFiles(rawGltf, ({ uri }) => {
-    referencedFiles.push(resolve(dirname(modelFile), uri))
-  })
-
-  return referencedFiles
 }
 
 export async function handleReferencedModelFiles(

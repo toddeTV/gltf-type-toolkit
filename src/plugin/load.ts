@@ -14,7 +14,7 @@ export function loadInclude(id: string): boolean {
   return id.endsWith(SEPARATE_GLTF_MODEL_EXTENSION)
 }
 
-export const createLoad: (options?: Options) => UnpluginOptions['load'] = () => async function (id) {
+export const createLoad: (options: Options | undefined) => UnpluginOptions['load'] = () => async function (id) {
   if (!id.endsWith(SEPARATE_GLTF_MODEL_EXTENSION)) {
     return
   }
