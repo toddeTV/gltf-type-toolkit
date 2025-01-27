@@ -19,6 +19,10 @@ export const buildDetector = {
     },
   },
 
+  rolldown: {
+    // Has only build mode.
+  },
+
   rollup: {
     // Has only build mode.
   },

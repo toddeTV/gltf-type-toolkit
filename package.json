@@ -67,6 +67,10 @@
       "import": "./dist/nuxt.js",
       "require": "./dist/nuxt.cjs"
     },
+    "./rolldown": {
+      "import": "./dist/rolldown.js",
+      "require": "./dist/rolldown.cjs"
+    },
     "./rollup": {
       "import": "./dist/rollup.js",
       "require": "./dist/rollup.cjs"
@@ -133,6 +137,7 @@
     "astro": "*",
     "draco3d": "^1.5.7",
     "esbuild": "*",
+    "rolldown": "^1.0.0-beta.3",
     "rollup": "^3 || ^4",
     "three": ">=0.170.0",
     "vite": ">=3",
@@ -155,6 +160,9 @@
       "optional": true
     },
     "esbuild": {
+      "optional": true
+    },
+    "rolldown": {
       "optional": true
     },
     "rollup": {
