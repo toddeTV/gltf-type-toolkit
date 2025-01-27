@@ -27,6 +27,8 @@ export const createLoad: (options: Options | undefined) => UnpluginOptions['load
 
 async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string): Promise<{ code: string }> {
   if (isBuild()) {
+    // For build we need to emit the binary file and return the file name of the file inside the bundle.
+
     // TODO: Parse the binary for the json contents and process them like below.
     // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
     // which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
@@ -42,6 +44,8 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
     }
   }
 
+  // For dev we only need to return the path to the file RELATIVE to the project dir.
+
   return {
     code: `export default ${JSON.stringify(relative(cwd(), modelFile))};`,
   }
@@ -50,25 +54,31 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
 async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: string): Promise<{ code: string }> {
   const rawGltf = JSON.parse(await readFile(modelFile, { encoding: 'utf8' }))
 
-  // For dev we just want to pass the gltf json. The gltf loader of three.js should do its thing correctly and resolve
-  // all referenced files.
-  // During building we want to bundle those referenced files. That means the paths inside the json need to be adjusted.
-  if (isBuild()) {
-    await handleReferencedModelFiles(rawGltf, async ({ setUri, uri }) => {
-      // According to the gtlf spec uri should now always be relative to the gltf file. The other allowed type
-      // (embedded) is not even forwarded here from this helper function.
+  // The json can reference other files. We need to resolve them to other paths so the build tools can correctly resolve
+  // them.
+  await handleReferencedModelFiles(rawGltf, async ({ setUri, uri }) => {
+    // According to the gtlf spec uri should now always be relative to the gltf file. The other allowed type
+    // (embedded) is not even forwarded here from this helper function.
 
-      const absoluteUri = resolve(dirname(modelFile), uri)
+    const absoluteUri = resolve(dirname(modelFile), uri)
+
+    if (isBuild()) {
+      // During build the file should be bundled. So we need to emit it and replace the uri inside the json with the
+      // path of the file inside the bundle.
 
       const source = await readFile(absoluteUri)
 
       const fileName = emitAssetFile.call(this, absoluteUri, source)
 
-      // The file name must be absolute because we want to serve it from the root.
       // TODO: Do we have to handle a base path here? Can we even get it in bundler-agnostic way?
-      setUri(`/${fileName}`)
-    })
-  }
+      setUri(fileName)
+    }
+    else {
+      // For dev we need to set the RELATIVE path to the project dir.
+
+      setUri(relative(cwd(), absoluteUri))
+    }
+  })
 
   return {
     code: `export default ${JSON.stringify(rawGltf)};`,
