@@ -59,6 +59,10 @@
       "import": "./dist/farm.js",
       "require": "./dist/farm.cjs"
     },
+    "./gltf-loader": {
+      "import": "./dist/gltf-loader.js",
+      "require": "./dist/gltf-loader.cjs"
+    },
     "./nuxt": {
       "import": "./dist/nuxt.js",
       "require": "./dist/nuxt.cjs"
