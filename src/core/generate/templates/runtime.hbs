@@ -3,7 +3,7 @@ import gltf from {{{gltfPath}}};
 import gltfLoader from {{{gltfLoaderPath}}};
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
-const node = Symbol();
+const path = Symbol();
 
 {{#each scenes}}
 {{!-- This generates the type of the node accessor data structure. --}}
@@ -16,7 +16,7 @@ export const {{name}} = {
 {{> node_getter/fn_prefix.hbs async=true identifiers=identifiers}}(spec) {
   {{!-- Pretend that the complete model is also a `Object3D` to allow uniform access. --}}
   let {{identifiers.nodeName}} = { children: (await loadModel()).scenes };
-  for (const idx of spec[node]) {
+  for (const idx of spec[path]) {
     {{identifiers.nodeName}} = {{identifiers.nodeName}}.children[idx];
   }
 
