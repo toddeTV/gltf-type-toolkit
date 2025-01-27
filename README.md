@@ -144,7 +144,7 @@ to different folders, changing paths, or adjusting how the model is handled afte
 Thanks to [Unplugin](https://github.com/unjs/unplugin), we support a wide variety of build tools and bundlers,
 resulting in the following compatibility in our project:
 
-(Legend:  Tested & Supported |  Not Yet Tested |  Not Supported)
+(Legend: 🟢 Tested & Supported | 🟡 Not Yet Tested | 🔴 Not Supported)
 
 | Build Tool                            | Status | Note                                                                      |
 | ------------------------------------- | ------ | ------------------------------------------------------------------------- |
@@ -160,14 +160,14 @@ resulting in the following compatibility in our project:
 
 ## glTF Versions and Representations
 
-(Legend:  Tested & Supported |  Not Yet Tested |  Not Supported)
+(Legend: 🟢 Tested & Supported | 🟡 Not Yet Tested | 🔴 Not Supported)
 
 | glTF Version | File Representation                    | Status | Note                                                                                                                                                                  |
 | ------------ | -------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| glTF 1.0     | Any                                    |       | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                                 |
-| glTF 2.0     | Separate (`.gltf` + `.bin` + textures) |       | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                                     |
-| glTF 2.0     | Embedded (only `.gltf`)                |       | Assets are embedded directly into the `.gltf` file as `uri:` data sources using base64 encoding, simplifying single-file management.                                  |
-| glTF 2.0     | Binary (`.glb`)                        |       | Currently not fully supported because we scan JSON-encoded `.gltf` files for type generation and cannot yet process binary representations. Contributions welcome! ❤️ |
+| glTF 1.0     | Any                                    | 🔴     | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                                 |
+| glTF 2.0     | Separate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                                     |
+| glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as `uri:` data sources using base64 encoding, simplifying single-file management.                                  |
+| glTF 2.0     | Binary (`.glb`)                        | 🔴     | Currently not fully supported because we scan JSON-encoded `.gltf` files for type generation and cannot yet process binary representations. Contributions welcome! ❤️ |
 
 ## Draco Compression handling
 
