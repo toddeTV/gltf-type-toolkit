@@ -118,9 +118,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        # TODO fix this bc currently using the frozen lockfile will fail due to the patch inside `package.json`
-        # run: pnpm install --frozen-lockfile
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build the project
         run: pnpm run build
