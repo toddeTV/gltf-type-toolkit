@@ -44,7 +44,11 @@ export class Imports {
         }))
         .filter(({ type }) => !(type && !includeTypeImports))
 
-      imports.push({ identifiers, module, typeOnly })
+      imports.push({
+        identifiers,
+        module: JSON.stringify(module),
+        typeOnly,
+      })
     }
 
     return imports
