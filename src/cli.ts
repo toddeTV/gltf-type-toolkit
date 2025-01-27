@@ -42,7 +42,7 @@ const main = defineCommand({
     const models = await findAllModelsInDir(dir)
 
     await Promise.all(
-      models.map(({ modelFile }) => generateModelTypes(modelFile, {
+      models.map(modelFile => generateModelTypes(modelFile, {
         customGltfLoaderModule: context.args.loader,
         verbose: context.args.verbose,
       })),
