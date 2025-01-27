@@ -76,6 +76,37 @@ the GitHub workflow (CI action) that:
 
 You can use `npx changelogen --dry` to generate the new changelog in a dry run to preview in development.
 
+## Template Compilation and Usage
+
+It uses Handlebars to generate the code.
+
+Here's a more detailed explanation of how everything works:
+
+1. During local installation, all Handlebars templates are precompiled into JavaScript code so they can be bundled
+   without the need to manually specify which `*.hbs` files need to be included or reference them at runtime.
+
+   1. The process works by scanning all files in the `src` directory and generating a TypeScript file for each
+      found template.
+   2. These files contain the precompiled Handlebars code and export the instantiated template (which is a regular
+      function) as the default export. This allows the templates to be used simply by importing them.
+   3. The script treats partials (identified by being in `_partials` directories) differently: They are also
+      precompiled as described above, but for each `_partials` directory, an index file is generated that registers
+      all the contained partials on import.
+   4. To generate these two types of files, the script itself uses Handlebars templates. These do not need to be
+      precompiled or bundled as they are only used during the plugin's development.
+
+2. The templates themselves are fairly simple but split across multiple files and helpers to reduce duplication.
+
+   1. The `fn_prefix` partial generates code for the node getter function and is adaptable for both `.d.ts`
+      and `.js` code. For example, in declaration files, the use of `async function` is not allowed.
+   2. The `children` partial is recursive and constructs the tree of child indices, using a helper function to
+      build the index array.
+   3. The `imports` partial builds a list of imports and takes into account type-only imports. Currently, this is
+      not required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
+   4. The main templates, `declaration` and `runtime`, are now simply wrappers around these partials.
+
+See [PR #16](https://github.com/toddeTV/gltf-type-toolkit/pull/16), which introduces this logic for the first time.
+
 ## Docs and helper websites
 
 \[currently none\]

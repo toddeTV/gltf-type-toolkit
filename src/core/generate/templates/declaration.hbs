@@ -1,0 +1,21 @@
+{{> imports.hbs}}
+
+{{!-- This symbol is needed to restrict node accessors to this model. --}}
+declare const path: unique symbol;
+
+{{#each scenes}}
+{{!-- This generates the type of the node accessor data structure. --}}
+export const {{name}}: {
+  {{!-- We need to create the initial indices array. --}}
+  {{> node_spec/children.hbs this indices=(singleton index) separator=";"}}
+};
+
+{{/each}}
+{{!-- This iterates over all paths of the above data structure and generates function overloads. --}}
+{{#each flattenedTree}}
+{{!-- We need to pass the PARENT identifiers down because we are now inside another context due to each. --}}
+{{> node_getter/fn_prefix.hbs async=false identifiers=../identifiers}}(spec: typeof {{#join names sep="."}}{{.}}{{/join}}): Promise<{{type}}>;
+{{/each}}
+
+{{!-- Prevent importing the path symbol --}}
+export {};

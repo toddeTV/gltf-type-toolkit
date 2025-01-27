@@ -1,0 +1,6 @@
+[path]: [{{#join indices sep=", "}}{{.}}{{/join}}]{{separator}}
+{{#each children~}}
+{{this.name}}: {
+  {{> node_spec/children.hbs this indices=(append ../indices this.index) separator=../separator~}}
+}{{../separator}}
+{{/each}}
