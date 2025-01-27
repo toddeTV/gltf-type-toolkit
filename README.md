@@ -23,7 +23,7 @@ With this plugin you get:
 - ⚠️ Detects and handles [Draco Compression](https://github.com/google/draco) during type generation automatically,
   see [Draco Compression handling](#draco-compression-handling) below for more information.
 - ✅ Works with glTF Seperate (`.gltf` + `.bin` + textures) and glTF Embedded (only `.gltf`) files,
-  see [glTF versions and representations](#gltf-versions-and-representations) below for more information.
+  see [glTF Versions and Representations](#gltf-versions-and-representations) below for more information.
 - ✅ ESM ready.
 - ⚠️ Build tool & bundler agnostic thanks to [Unplugin](https://github.com/unjs/unplugin), so use it with your
   favorite one, but see chapter
@@ -144,7 +144,7 @@ to different folders, changing paths, or adjusting how the model is handled afte
 Thanks to [Unplugin](https://github.com/unjs/unplugin), we support a wide variety of build tools and bundlers,
 resulting in the following compatibility in our project:
 
-(Legend: 🟢 Tested & Supported | 🟡 not yet tested | 🔴 Not Supported)
+(Legend:  Tested & Supported |  Not Yet Tested |  Not Supported)
 
 | Build Tool                            | Status | Note                                                                      |
 | ------------------------------------- | ------ | ------------------------------------------------------------------------- |
@@ -156,18 +156,18 @@ resulting in the following compatibility in our project:
 | [Astro](https://astro.build/)         | 🟡     |                                                                           |
 | [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                           |
 | [Rolldown](https://rolldown.rs/)      | 🟡     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin) |
-| [Farm](https://www.farmfe.org/)       | 🔴     | Tested & not working, help is welcome <3                                  |
+| [Farm](https://www.farmfe.org/)       | 🔴     | Tested & not working. Contributions welcome! ❤️                           |
 
-## glTF versions and representations
+## glTF Versions and Representations
 
-(Legend: 🟢 Tested & Supported | 🟡 not yet tested | 🔴 Not Supported)
+(Legend:  Tested & Supported |  Not Yet Tested |  Not Supported)
 
-| glTF version | file representation                    | Status | Note                                                                                                                                                                |
-| ------------ | -------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| glTF 1.0     | any                                    | 🔴     | glTF 2.0 was introduced in 2017, bringing significant improvements over its predecessor. Make sure you avoid using the outdated glTF 1.0 standard in your projects. |
-| glTF 2.0     | Seperate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Enable better performance, version control, caching, transferring, and debugging.                                                                      |
-| glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as `uri:` data sources using base64 encoding.                                                                    |
-| glTF 2.0     | Binary (`.glb`)                        | 🟢     | Currently not supported bc we scan the JSON encoded `.gltf` files for building the types and can currently not open the binary representation. Help is welcome <3   |
+| glTF Version | File Representation                    | Status | Note                                                                                                                                                                  |
+| ------------ | -------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| glTF 1.0     | Any                                    |       | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                                 |
+| glTF 2.0     | Separate (`.gltf` + `.bin` + textures) |       | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                                     |
+| glTF 2.0     | Embedded (only `.gltf`)                |       | Assets are embedded directly into the `.gltf` file as `uri:` data sources using base64 encoding, simplifying single-file management.                                  |
+| glTF 2.0     | Binary (`.glb`)                        |       | Currently not fully supported because we scan JSON-encoded `.gltf` files for type generation and cannot yet process binary representations. Contributions welcome! ❤️ |
 
 ## Draco Compression handling
 
