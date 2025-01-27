@@ -1,4 +1,5 @@
 import type { GltfAnalysis } from '../analyze.js'
+import { BINARY_GLTF_MODEL_EXTENSION, SEPARATE_GLTF_MODEL_EXTENSION } from '../constants.js'
 import runtime from './templates/runtime.hbs.js'
 import './handlebars.js'
 
@@ -17,6 +18,8 @@ export function generateModelRuntime(
   }
 
   return runtime({
+    gltfIsBinary: relativeGltfPath.endsWith(BINARY_GLTF_MODEL_EXTENSION),
+    gltfIsSeparate: relativeGltfPath.endsWith(SEPARATE_GLTF_MODEL_EXTENSION),
     gltfLoaderPath: JSON.stringify(gltfLoaderPath),
     identifiers: { ...identifiers, nodeName },
     imports: imports.toTemplateData(false),

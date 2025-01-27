@@ -1,5 +1,4 @@
 {{> imports.hbs}}
-import gltf from {{{relativeGltfPath}}};
 import gltfLoader from {{{gltfLoaderPath}}};
 
 {{!-- This symbol is needed to restrict node accessors to this model. --}}
@@ -23,9 +22,9 @@ export const {{name}} = {
   return {{identifiers.nodeName}};
 }
 
-async function loadModel() {
-  {{!-- The base path needs to be empty. At runtime it is prefixed to the referenced file path. --}}
-  {{!-- During dev this is a relative path inside the project root. --}}
-  {{!-- After building this is a root absolute path. --}}
-  return await gltfLoader.parseAsync(gltf, '');
-}
+{{#if gltfIsBinary}}
+{{> load_model/binary.hbs}}
+{{/if}}
+{{#if gltfIsSeparate}}
+{{> load_model/separate.hbs}}
+{{/if}}

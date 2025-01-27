@@ -2,7 +2,8 @@ import type { Buffer } from 'node:buffer'
 import type { UnpluginBuildContext, UnpluginOptions } from 'unplugin'
 import type { Options } from '../types.js'
 import { readFile } from 'node:fs/promises'
-import { dirname, parse, resolve } from 'node:path'
+import { dirname, parse, relative, resolve } from 'node:path'
+import { cwd } from 'node:process'
 import { xxh3 } from '@node-rs/xxhash'
 import { BINARY_GLTF_MODEL_EXTENSION, SEPARATE_GLTF_MODEL_EXTENSION } from '../core/constants.js'
 import { handleReferencedModelFiles, isGltfModelFile } from '../core/utils/find-models.js'
@@ -25,17 +26,24 @@ export const createLoad: (options: Options | undefined) => UnpluginOptions['load
 }
 
 async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string): Promise<{ code: string }> {
-  // TODO: Parse the binary for the json contents and process them like below.
-  // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json which
-  // can be extracted with TextDecoder according to the spec. This json can reference external buffers or the embedded
-  // binary buffer which must be the second chunk.
-  // For now we assume that a binary model file does NOT reference external files.
+  if (isBuild()) {
+    // TODO: Parse the binary for the json contents and process them like below.
+    // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
+    // which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
+    // embedded binary buffer which must be the second chunk.
+    // For now we assume that a binary model file does NOT reference external files.
 
-  const source = await readFile(modelFile)
+    const source = await readFile(modelFile)
+
+    const fileName = emitAssetFile.call(this, modelFile, source)
+
+    return {
+      code: `export default ${JSON.stringify(fileName)};`,
+    }
+  }
 
   return {
-    // The gltf loader expects an ArrayBuffer...
-    code: `export default new Uint8Array([${[...source].join(', ')}]).buffer;`,
+    code: `export default ${JSON.stringify(relative(cwd(), modelFile))};`,
   }
 }
 
