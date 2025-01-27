@@ -3,11 +3,15 @@ import { join } from 'node:path'
 import { GLTF_MODEL_EXTENSIONS } from '../constants.js'
 
 export async function findAllModelsInDir(dir: string): Promise<string[]> {
-  const entries = await readdir(dir, { recursive: true, withFileTypes: true })
+  const entries = await readdir(dir, { recursive: true })
 
   return entries
-    .filter(e => GLTF_MODEL_EXTENSIONS.some(ext => e.name.endsWith(ext)))
-    .map(entry => join(entry.parentPath, entry.name))
+    .filter(isGltfModelFile)
+    .map(file => join(dir, file))
+}
+
+export function isGltfModelFile(file: string): boolean {
+  return GLTF_MODEL_EXTENSIONS.some(ext => file.endsWith(ext))
 }
 
 export async function handleReferencedModelFiles(
