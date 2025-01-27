@@ -105,7 +105,7 @@ Here's a more detailed explanation of how everything works:
       not required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
    4. The main templates, `declaration` and `runtime`, are now simply wrappers around these partials.
 
-See PR #16, which introduces this logic for the first time.
+See [PR #16](https://github.com/toddeTV/gltf-type-toolkit/pull/16), which introduces this logic for the first time.
 
 ## Docs and helper websites
 
