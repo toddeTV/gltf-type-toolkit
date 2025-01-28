@@ -244,7 +244,11 @@ Honorable mentions to people that helped this project:
 
 Respectable mentions to projects that helped this project:
 
-- \[currently none\]
+- [zlig (zen-landscape-idle-game)](https://github.com/toddeTV/zlig): A Japanese zen-inspired idle browser game that
+  showcases lightweight web technologies like `Vue` and `Three.js` to create fully browser-based games. The idea and
+  initial implementation of this plugin [@todde.tv/gltf-type-toolkit](https://github.com/toddeTV/gltf-type-toolkit)
+  originated during the development of zlig, where we required type-safe glTF representations to enable faster and
+  more reliable development.
 
 Used programs/ softwares, services and dependencies - besides the ones in `./package.json`:
 
