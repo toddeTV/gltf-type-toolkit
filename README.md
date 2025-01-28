@@ -119,13 +119,15 @@ to different folders, changing paths, or adjusting how the model is handled afte
 3. Start your dev to generate all files. With our example model we get:
 
    ```diff
-   @/assets/models/MyModel.gltf
-   @/assets/models/MyModel.bin
-   @/assets/models/MyModel-texture1.png
-   @/assets/models/MyModel-texture2.png
+    @/assets/models/MyModel.gltf
+    @/assets/models/MyModel.bin
+    @/assets/models/MyModel-texture1.png
+    @/assets/models/MyModel-texture2.png
    +@/assets/models/MyModel.gltf.d.ts    <- the typing
-   +@/assets/models/MyModel.gltf.js      <- actual code with node get helper function and scene/ model graph representation
+   +@/assets/models/MyModel.gltf.js      <- actual code with node get helper function and model graph representation
    ```
+
+   > Alternatively, you can run the script `generate-gltf-types` supplied by the package to manually create those files. More details at [Binary scripts](#binary-scripts).
 
 4. Import the type safe model in your code and use it, e.g.:
 
@@ -209,6 +211,16 @@ const gltfLoader = new GLTFLoader().setDRACOLoader(dracoLoader)
 
 export default gltfLoader
 ```
+
+## Binary scripts
+
+Right now only one script is supplied by the package:
+
+### `generate-gltf-types [DIR]`
+
+This script generates types and runtime code for all models found in `DIR` and sub-directories. `DIR` defaults to the current directory.
+
+Run `generate-gltf-types --help` for more options and details.
 
 ## idea behind the scenes
 
