@@ -92,7 +92,7 @@ jobs:
 
       - name: Bump `package.json` version & generate changelog both from conventional commits
         # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: npx changelogen@0.5.7 --output CHANGELOG.md --bump --no-commit --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
+        run: pnpx changelogen@0.5.7 --output CHANGELOG.md --bump --no-commit --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -112,9 +112,9 @@ jobs:
           git push origin --tags
 
       - name: Sync tags with GitHub releases & create the new release
-        # run: npx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
-        # run: npx changelogen@0.5.7 gh release
-        run: npx changelogen@0.5.7 gh release all
+        # run: pnpx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
+        # run: pnpx changelogen@0.5.7 gh release
+        run: pnpx changelogen@0.5.7 gh release all
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
