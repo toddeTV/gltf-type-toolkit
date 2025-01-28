@@ -171,6 +171,7 @@
     "@antfu/eslint-config": "~3.16.0",
     "@types/node": "~22.10.7",
     "@types/three": "~0.172.0",
+    "changelogen": "0.5.7",
     "eslint": "~9.18.0",
     "eslint-plugin-format": "~1.0.1",
     "eslint-plugin-perfectionist": "~4.7.0",
@@ -185,7 +186,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "three-stdlib": "patches/three-stdlib.patch"
+      "three-stdlib": "patches/three-stdlib.patch",
+      "changelogen": "patches/changelogen.patch"
     }
   }
 }

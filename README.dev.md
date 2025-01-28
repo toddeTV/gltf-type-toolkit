@@ -58,9 +58,11 @@ the GitHub workflow (CI action) that:
 
 - uses `pnpx changelogen` to analyze the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from
   the last version to the current commit for:
-  - bumping the version in `package.json` via:
-    - automatically when no `TYPE` is given
-    - manually with a given `TYPE` where the following is possible:
+  - If no `TYPE` is present: Use the version from the `package.json` as target new version.<br>
+    So if the version already was changed via development this can be used to not bump another version on top.
+  - If no `TYPE` present: Bumping the version in `package.json` via:
+    - automatically when `TYPE` is `auto` depending on the detected semver changes.
+    - manually with the following `TYPE`:
       - `major`: Bump as a semver-major version
       - `minor`: Bump as a semver-minor version
       - `patch`: Bump as a semver-patch version
