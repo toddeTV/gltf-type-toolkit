@@ -111,14 +111,15 @@
     "pnpm": "9"
   },
   "scripts": {
-    "prepare": "run-s \"precompile-templates\"",
-    "precompile-templates": "esno scripts/precompile-templates.ts",
+    "bin:gltf-codegen": "esno src/cli.ts",
     "build": "tsup",
-    "dev": "tsup --watch src",
     "build:post": "esno scripts/postbuild.ts",
+    "dev": "tsup --watch src",
     "lint": "eslint .",
     "lint:fix": "run-s \"lint --fix\"",
-    "playground": "pnpm -C playground run dev"
+    "playground": "pnpm -C playground run dev",
+    "precompile-templates": "esno scripts/precompile-templates.ts",
+    "prepare": "run-s \"precompile-templates\""
   },
   "peerDependencies": {
     "@farmfe/core": ">=1",
