@@ -27,8 +27,8 @@ With this plugin you get:
 - ✅ Only the used models are bundled in the final product, not all included in your dev project.
 - ⚠️ Detects and handles [Draco Compression](https://github.com/google/draco) during type generation automatically,
   see [Draco Compression handling](#draco-compression-handling) below for more information.
-- ✅ Works with glTF Seperate (`.gltf` + `.bin` + textures), glTF Embedded (only `.gltf`) and glTF Binary (`.glb`) files,
-  see [glTF Versions and Representations](#gltf-versions-and-representations) below for more information.
+- ✅ Works with glTF Seperate (`.gltf` + `.bin` + textures), glTF Embedded (only `.gltf`) and glTF Binary (`.glb`)
+  files, see [glTF Versions and Representations](#gltf-versions-and-representations) below for more information.
 - ✅ ESM ready.
 - ⚠️ Build tool & bundler agnostic thanks to [Unplugin](https://github.com/unjs/unplugin), so use it with your
   favorite one, but see chapter
@@ -174,7 +174,7 @@ resulting in the following compatibility in our project:
 | glTF 1.0     | Any                                    | 🔴     | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                |
 | glTF 2.0     | Separate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                    |
 | glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as base64 encoded `data:` sources within the `uri` fields, making single-file management simpler. |
-| glTF 2.0     | Binary (`.glb`)                        | 🟡     | Currently, only works with models that contain all needed files in the binary chunk without external references. Contributions welcome! ❤️           |
+| glTF 2.0     | Binary (`.glb`)                        | 🟡     | Currently, only works with models that contain all referenced files in the binary chunk without external file references. Contributions welcome! ❤️  |
 
 ## Draco Compression handling
 
@@ -214,11 +214,15 @@ export default gltfLoader
 
 ## Binary scripts
 
-Right now only one script is supplied by the package:
+In addition to the commands in the `scripts` section of the `package.json`, this plugin also provides binary scripts.
+
+Run them by adding this plugin to your project, be sure to have the dependencies installed and then
+add `npx` or `pnpx` before the commands.
 
 ### `gltf-codegen [DIR]`
 
-This script generates types and runtime code for all models found in `DIR` and sub-directories. `DIR` defaults to the current directory.
+This script generates types and runtime code for all models found in `DIR` and sub-directories. `DIR` defaults to
+the current directory.
 
 Run `gltf-codegen --help` for more options and details.
 
