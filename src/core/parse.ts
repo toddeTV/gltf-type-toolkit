@@ -3,7 +3,7 @@ import type { GLTF, GLTFLoader } from 'three-stdlib'
 import { readFile, stat } from 'node:fs/promises'
 import { dirname } from 'node:path'
 
-export async function parseGltfModel(gltf: GLTFLoader, modelFile: string): Promise<GLTF> {
+export async function parseGltfModel(gltfLoader: GLTFLoader, modelFile: string): Promise<GLTF> {
   let stats: Stats
   try {
     stats = await stat(modelFile)
@@ -16,9 +16,9 @@ export async function parseGltfModel(gltf: GLTFLoader, modelFile: string): Promi
     throw new Error(`"${modelFile}" is not a file!`)
   }
 
-  const json = (await readFile(modelFile, { encoding: 'utf8' }))
+  const gltf = (await readFile(modelFile)).buffer as ArrayBuffer
 
-  const model = await gltf.parseAsync(json, dirname(modelFile))
+  const model = await gltfLoader.parseAsync(gltf, dirname(modelFile))
 
   return model
 }

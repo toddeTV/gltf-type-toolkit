@@ -96,6 +96,9 @@
       ]
     }
   },
+  "bin": {
+    "gltf-codegen": "dist/cli.js"
+  },
   "files": [
     "CHANGELOG.md",
     "LICENSE.md",
@@ -108,14 +111,15 @@
     "pnpm": "9"
   },
   "scripts": {
-    "prepare": "run-s \"precompile-templates\"",
-    "precompile-templates": "esno scripts/precompile-templates.ts",
+    "bin:gltf-codegen": "esno src/cli.ts",
     "build": "tsup",
-    "dev": "tsup --watch src",
     "build:post": "esno scripts/postbuild.ts",
+    "dev": "tsup --watch src",
     "lint": "eslint .",
     "lint:fix": "run-s \"lint --fix\"",
-    "playground": "pnpm -C playground run dev"
+    "playground": "pnpm -C playground run dev",
+    "precompile-templates": "esno scripts/precompile-templates.ts",
+    "prepare": "run-s \"precompile-templates\""
   },
   "peerDependencies": {
     "@farmfe/core": ">=1",
@@ -160,12 +164,15 @@
     }
   },
   "dependencies": {
+    "citty": "~0.1.6",
+    "consola": "~3.4.0",
     "handlebars": "~4.7.8"
   },
   "devDependencies": {
     "@antfu/eslint-config": "~3.16.0",
     "@types/node": "~22.10.7",
     "@types/three": "~0.172.0",
+    "changelogen": "0.5.7",
     "eslint": "~9.18.0",
     "eslint-plugin-format": "~1.0.1",
     "eslint-plugin-perfectionist": "~4.7.0",
@@ -180,7 +187,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "three-stdlib": "patches/three-stdlib.patch"
+      "three-stdlib": "patches/three-stdlib.patch",
+      "changelogen": "patches/changelogen.patch"
     }
   }
 }
