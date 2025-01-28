@@ -18,6 +18,11 @@ With this plugin you get:
 
 - ✅ Type safe glTF file representations with correct inner [three.js](https://github.com/mrdoob/three.js/) types
   like `Object3D`, `Mesh`, etc..
+  - ❗ Currently, we primarily support and generate the [three.js](https://github.com/mrdoob/three.js/) types
+    `Object3D`, `Group`, and `Mesh`. Support for generating types for lights, cameras, materials, and other
+    components is not yet implemented. See and subscribe to
+    [Issue #22](https://github.com/toddeTV/gltf-type-toolkit/issues/22) to stay updated on this development and
+    be notified when these features are added.
 - ✅ Building will fail if a model is missing due to type-safe workflow.
 - ✅ Only the used models are bundled in the final product, not all included in your dev project.
 - ⚠️ Detects and handles [Draco Compression](https://github.com/google/draco) during type generation automatically,
