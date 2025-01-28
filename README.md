@@ -212,17 +212,15 @@ export default gltfLoader
 
 ## idea behind the scenes
 
-On runtime it runs `useGLTF` under the hood. So no extra layer and therefore correct objects that
-[three.js](https://github.com/mrdoob/three.js/) would give you when importing it yourself in runtime.
+On runtime it runs the default glTF loader mechanics of [three.js](https://github.com/mrdoob/three.js/) under the hood. So, there is no extra layer of processing and therefore correct objects that three.js would give you when importing it yourself in your application.
 
-To achieve this, we patch a `useGLTF` from `three.js` to be able to run it in CLI because originally you can only use
-this in a browser runtime.
+To achieve this, we use patched versions of `DRACOLoader` and `GLTFLoader` to be able to run it in CLI because originally you can only use them in a browser runtime.
 
 So we do not parse the glTF JSON file ourself but work with the representation after the
-[three.js](https://github.com/mrdoob/three.js/) `useGLTF` parsing. For code completion and for working with the
-scene/ model graph, we store the paths in the graph by caching the child indices in the `childs` array from each
+[three.js](https://github.com/mrdoob/three.js/) parsing. For code completion and for working with the
+model graph, we store the paths in the graph by caching the child indices in the `children` array from each
 object. With this, we can O(1) look up what the user requests without the need of traversing - neither depth first
-(default approach from [three.js](https://github.com/mrdoob/three.js/)), nor breath first.
+(default approach from [three.js](https://github.com/mrdoob/three.js/)), nor breadth first.
 
 One of the biggest challenges was making the plugin build tool agnostic bc not every build tool handles inner path
 references the same. Therefore, we have to reconstruct the buffers that link the glTF file with the binary and
