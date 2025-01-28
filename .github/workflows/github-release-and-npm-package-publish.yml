@@ -13,8 +13,9 @@ jobs:
     permissions:
       contents: read
     outputs:
-      run_suffix_present: ${{ steps.check_run_suffix_present.outputs.run_suffix_present }}
-      run_suffix_force_version: ${{ steps.check_run_suffix_present.outputs.run_suffix_force_version }}
+      is_suffix_present: ${{ steps.check_create_release_suffix.outputs.is_suffix_present }}
+      is_version_bump: ${{ steps.check_create_release_suffix.outputs.is_version_bump }}
+      force_version: ${{ steps.check_create_release_suffix.outputs.force_version }}
     steps:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
@@ -22,8 +23,8 @@ jobs:
           ref: main # branch to checkout
           fetch-depth: 0
 
-      - name: Check commit message suffix for `[create-release]`
-        id: check_run_suffix_present
+      - name: Check commit message suffix for `[create-release-TYPE]`
+        id: check_create_release_suffix
         uses: actions/github-script@v7
         with:
           script: |
@@ -32,24 +33,45 @@ jobs:
             const lastCommitMessage = context.payload.head_commit.message;
             const lastCommitMessageFirstLine = lastCommitMessage.split('\n')[0];
 
-            let run_suffix_present = "false";
-            let run_suffix_force_version = "";
+            let is_suffix_present = "false";
+            let is_version_bump = "false";
+            let force_version = "";
+
+            const allowedTypes = [
+              "auto",
+              "major",
+              "minor",
+              "patch",
+              "premajor",
+              "preminor",
+              "prepatch",
+              "prerelease",
+            ];
 
             const regex = /\[create-release(?:-([a-z]+))?\]/;
             const match = lastCommitMessageFirstLine.match(regex);
 
             if (match) {
-              run_suffix_present = "true";
+              is_suffix_present = "true";
               if(match[1]){
-                run_suffix_force_version = `--${match[1]}`
+                if(!allowedTypes.includes(match[1])){
+                  throw new Error(`Invalid release TYPE: ${match[1]}`);
+                }
+                is_version_bump = "true";
+                if(match[1] !== "auto"){
+                  force_version = `--${match[1]}`
+                }
               }
             }
 
-            console.dir(`Set output: run_suffix_present=${run_suffix_present}`);
-            core.setOutput("run_suffix_present", run_suffix_present);
+            console.dir(`Set output: is_suffix_present=${is_suffix_present}`);
+            core.setOutput("is_suffix_present", is_suffix_present);
 
-            console.dir(`Set output: run_suffix_force_version=${run_suffix_force_version}`);
-            core.setOutput("run_suffix_force_version", run_suffix_force_version);
+            console.dir(`Set output: is_version_bump=${is_version_bump}`);
+            core.setOutput("is_version_bump", is_version_bump);
+
+            console.dir(`Set output: force_version=${force_version}`);
+            core.setOutput("force_version", force_version);
 
   dependence-lint:
     name: Depend on Lint
@@ -59,7 +81,7 @@ jobs:
     needs:
       - check_conditions
       - dependence-lint
-    if: needs.check_conditions.outputs.run_suffix_present == 'true'
+    if: needs.check_conditions.outputs.is_suffix_present == 'true'
     name: Create GitHub Release & NPM Publish
     runs-on: ubuntu-latest
     permissions:
@@ -86,19 +108,29 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "no-reply@todde.tv"
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       # - name: Get old `package.json` version
       #   id: get_package_version_old
       #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
 
-      - name: Bump `package.json` version & generate changelog both from conventional commits
+      - name: Bump `package.json` version depending on given TYPE from commit message
+        if: needs.check_conditions.outputs.is_version_bump == 'true'
         # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: pnpx changelogen@0.5.7 --output CHANGELOG.md --bump --no-commit --no-tag ${{ needs.check_conditions.outputs.run_suffix_force_version }}
+        run: pnpm changelogen --bump ${{ needs.check_conditions.outputs.force_version }} --no-commit --no-tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Get new `package.json` version
         id: get_package_version_new
         run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+
+      - name: Generate changelog from conventional commits
+        # -from "v${{ steps.get_package_version_old.outputs.version }}"
+        run: pnpm changelogen --output CHANGELOG.md -r "${{ steps.get_package_version_new.outputs.version }}" --no-commit --no-tag
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Git add, commit & push changes made to `package.json` & `CHANGELOG.md` to `main`
         run: |
@@ -112,14 +144,13 @@ jobs:
           git push origin --tags
 
       - name: Sync tags with GitHub releases & create the new release
-        # run: pnpx changelogen@0.5.7 gh release "v${{ steps.get_package_version_new.outputs.version }}"
-        # run: pnpx changelogen@0.5.7 gh release
-        run: pnpx changelogen@0.5.7 gh release all
+        # run: pnpm changelogen gh release all
+        run: pnpm changelogen gh release "v${{ steps.get_package_version_new.outputs.version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # - name: Install dependencies
+      #   run: pnpm install --frozen-lockfile
 
       - name: Build the project
         run: pnpm run build
