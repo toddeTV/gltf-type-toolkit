@@ -1,0 +1,30 @@
+diff --git a/dist/shared/changelogen.a79f5d5c.mjs b/dist/shared/changelogen.a79f5d5c.mjs
+index 901f6e360af4b6ea62758ebe28f0758d306a41f0..e8b5f4c3f9a94c7cd80344097950daea6fa499f8 100644
+--- a/dist/shared/changelogen.a79f5d5c.mjs
++++ b/dist/shared/changelogen.a79f5d5c.mjs
+@@ -395,8 +395,8 @@ function groupBy(items, key) {
+   }
+   return groups;
+ }
+-const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+)).*$/gm;
+-const VERSION_RE = /^v?(\d+\.\d+\.\d+)$/;
++const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)).*$/gm;
++const VERSION_RE = /^v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)$/;
+ 
+ const defaultOutput = "CHANGELOG.md";
+ const getDefaultConfig = () => ({
+diff --git a/dist/shared/changelogen.c9085e7f.cjs b/dist/shared/changelogen.c9085e7f.cjs
+index 41e5865eb367763db7bc45aa1003bc0e7af4035b..e6dd6b133c4320c535541333d49540787db64c6c 100644
+--- a/dist/shared/changelogen.c9085e7f.cjs
++++ b/dist/shared/changelogen.c9085e7f.cjs
+@@ -397,8 +397,8 @@ function groupBy(items, key) {
+   }
+   return groups;
+ }
+-const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+)).*$/gm;
+-const VERSION_RE = /^v?(\d+\.\d+\.\d+)$/;
++const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)).*$/gm;
++const VERSION_RE = /^v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)$/;
+ 
+ const defaultOutput = "CHANGELOG.md";
+ const getDefaultConfig = () => ({
