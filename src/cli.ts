@@ -30,7 +30,7 @@ const main = defineCommand({
 
   meta: {
     description: '',
-    name: 'generate-gltf-types',
+    name: 'gltf-codegen',
     version,
   },
 

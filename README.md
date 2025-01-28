@@ -127,7 +127,7 @@ to different folders, changing paths, or adjusting how the model is handled afte
    +@/assets/models/MyModel.gltf.js      <- actual code with node get helper function and model graph representation
    ```
 
-   > Alternatively, you can run the script `generate-gltf-types` supplied by the package to manually create those files. More details at [Binary scripts](#binary-scripts).
+   > Alternatively, you can run the script `gltf-codegen` supplied by the package to manually create those files. More details at [Binary scripts](#binary-scripts).
 
 4. Import the type safe model in your code and use it, e.g.:
 
@@ -169,12 +169,12 @@ resulting in the following compatibility in our project:
 
 (Legend: 🟢 Tested & Supported | 🟡 Partially Supported | 🔴 Not Supported)
 
-| glTF Version | File Representation                    | Status | Note                                                                                                                                                            |
-| ------------ | -------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| glTF 1.0     | Any                                    | 🔴     | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                           |
-| glTF 2.0     | Separate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                               |
-| glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as base64 encoded `data:` sources within the `uri` fields, making single-file management simpler.            |
-| glTF 2.0     | Binary (`.glb`)                        | 🟡     | Currently, only works with models that contain all needed files in the binary chunk without external references. Contributions welcome! ❤️ |
+| glTF Version | File Representation                    | Status | Note                                                                                                                                                 |
+| ------------ | -------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| glTF 1.0     | Any                                    | 🔴     | glTF 2.0 was introduced in 2017 with major improvements. Avoid using the outdated glTF 1.0 standard in your projects.                                |
+| glTF 2.0     | Separate (`.gltf` + `.bin` + textures) | 🟢     | Recommended! Offers better performance, version control, caching, transferability, and debugging.                                                    |
+| glTF 2.0     | Embedded (only `.gltf`)                | 🟢     | Assets are embedded directly into the `.gltf` file as base64 encoded `data:` sources within the `uri` fields, making single-file management simpler. |
+| glTF 2.0     | Binary (`.glb`)                        | 🟡     | Currently, only works with models that contain all needed files in the binary chunk without external references. Contributions welcome! ❤️           |
 
 ## Draco Compression handling
 
@@ -216,11 +216,11 @@ export default gltfLoader
 
 Right now only one script is supplied by the package:
 
-### `generate-gltf-types [DIR]`
+### `gltf-codegen [DIR]`
 
 This script generates types and runtime code for all models found in `DIR` and sub-directories. `DIR` defaults to the current directory.
 
-Run `generate-gltf-types --help` for more options and details.
+Run `gltf-codegen --help` for more options and details.
 
 ## idea behind the scenes
 

@@ -97,7 +97,7 @@
     }
   },
   "bin": {
-    "generate-gltf-types": "dist/cli.js"
+    "gltf-codegen": "dist/cli.js"
   },
   "files": [
     "CHANGELOG.md",
