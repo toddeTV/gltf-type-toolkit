@@ -35,9 +35,8 @@ jobs:
             let run_suffix_present = "false";
             let run_suffix_force_version = "";
 
-            const commitMessage = process.env.message;
             const regex = /\[create-release(?:-([a-z]+))?\]/;
-            const match = commitMessage.match(regex);
+            const match = lastCommitMessageFirstLine.match(regex);
 
             if (match) {
               run_suffix_present = "true";
