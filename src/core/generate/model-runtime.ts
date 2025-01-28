@@ -18,9 +18,9 @@ export function generateModelRuntime(
 
   return runtime({
     gltfLoaderPath: JSON.stringify(gltfLoaderPath),
-    gltfPath: JSON.stringify(relativeGltfPath),
     identifiers: { ...identifiers, nodeName },
     imports: imports.toTemplateData(false),
+    relativeGltfPath: JSON.stringify(relativeGltfPath),
     scenes,
   }).trim()
 }
