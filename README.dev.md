@@ -101,8 +101,8 @@ Here's a more detailed explanation of how everything works:
       and `.js` code. For example, in declaration files, the use of `async function` is not allowed.
    2. The `children` partial is recursive and constructs the tree of child indices, using a helper function to
       build the index array.
-   3. The `imports` partial builds a list of imports and takes into account type-only imports. Currently, this is
-      not required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
+   3. The `imports` partial builds a list of imports and takes into account type-only imports. Currently, this is not
+      required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
    4. The main templates, `declaration` and `runtime`, are now simply wrappers around these partials.
 
 See [PR #16](https://github.com/toddeTV/gltf-type-toolkit/pull/16), which introduces this logic for the first time.
