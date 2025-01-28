@@ -228,9 +228,12 @@ Run `gltf-codegen --help` for more options and details.
 
 ## idea behind the scenes
 
-On runtime it runs the default glTF loader mechanics of [three.js](https://github.com/mrdoob/three.js/) under the hood. So, there is no extra layer of processing and therefore correct objects that three.js would give you when importing it yourself in your application.
+On runtime it runs the default glTF loader mechanics of [three.js](https://github.com/mrdoob/three.js/) under the
+hood. So, there is no extra layer of processing and therefore correct objects that three.js would give you when
+importing it yourself in your application.
 
-To achieve this, we use patched versions of `DRACOLoader` and `GLTFLoader` to be able to run it in CLI because originally you can only use them in a browser runtime.
+To achieve this, we use patched versions of `DRACOLoader` and `GLTFLoader` to be able to run it in CLI because
+originally you can only use them in a browser runtime.
 
 So we do not parse the glTF JSON file ourself but work with the representation after the
 [three.js](https://github.com/mrdoob/three.js/) parsing. For code completion and for working with the
