@@ -56,7 +56,7 @@ type foo = { bar: 2 }
 Using the suffix `[create-release]` or `[create-release-TYPE]` in a commit message on branch `main` will trigger
 the GitHub workflow (CI action) that:
 
-- uses `npx changelogen` to analyze the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from
+- uses `pnpx changelogen` to analyze the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from
   the last version to the current commit for:
   - bumping the version in `package.json` via:
     - automatically when no `TYPE` is given
@@ -74,7 +74,7 @@ the GitHub workflow (CI action) that:
 - Creating a GitHub Release out of it
 - Publishing the package into the [NPM Registry](https://registry.npmjs.org/)
 
-You can use `npx changelogen --dry` to generate the new changelog in a dry run to preview in development.
+You can use `pnpx changelogen --dry` to generate the new changelog in a dry run to preview in development.
 
 ## Template Compilation and Usage
 
@@ -101,8 +101,8 @@ Here's a more detailed explanation of how everything works:
       and `.js` code. For example, in declaration files, the use of `async function` is not allowed.
    2. The `children` partial is recursive and constructs the tree of child indices, using a helper function to
       build the index array.
-   3. The `imports` partial builds a list of imports and takes into account type-only imports. Currently, this is
-      not required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
+   3. The `imports` partial builds a list of imports and takes into account type-only imports. Currently, this is not
+      required and is a remnant of a previous iteration. I decided to keep it in, as it might be useful in the future.
    4. The main templates, `declaration` and `runtime`, are now simply wrappers around these partials.
 
 See [PR #16](https://github.com/toddeTV/gltf-type-toolkit/pull/16), which introduces this logic for the first time.
