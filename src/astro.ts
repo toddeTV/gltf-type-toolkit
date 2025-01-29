@@ -1,5 +1,4 @@
 import type { Options } from './types'
-
 import unplugin from './index.js'
 
 export default (options: Options): any => ({

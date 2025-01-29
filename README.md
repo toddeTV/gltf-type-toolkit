@@ -153,17 +153,17 @@ resulting in the following compatibility in our project:
 
 (Legend: 🟢 Tested & Supported | 🟡 Not Yet Tested | 🔴 Not Supported)
 
-| Build Tool                            | Status | Note                                                                      |
-| ------------------------------------- | ------ | ------------------------------------------------------------------------- |
-| [esbuild](https://esbuild.github.io/) | 🟢     |                                                                           |
-| [Rollup](https://rollupjs.org/)       | 🟢     |                                                                           |
-| [Rspack](https://www.rspack.dev/)     | 🟢     |                                                                           |
-| [Vite](https://vitejs.dev/)           | 🟢     |                                                                           |
-| [Webpack](https://webpack.js.org/)    | 🟢     |                                                                           |
-| [Astro](https://astro.build/)         | 🟡     |                                                                           |
-| [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                           |
-| [Rolldown](https://rolldown.rs/)      | 🟡     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin) |
-| [Farm](https://www.farmfe.org/)       | 🔴     | Tested & not working. Contributions welcome! ❤️                           |
+| Build Tool                            | Status | Note                                                                                                                                      |
+| ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [esbuild](https://esbuild.github.io/) | 🟢     |                                                                                                                                           |
+| [Rolldown](https://rolldown.rs/)      | 🟢     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin)                                                                 |
+| [Rollup](https://rollupjs.org/)       | 🟢     |                                                                                                                                           |
+| [Rspack](https://www.rspack.dev/)     | 🟢     |                                                                                                                                           |
+| [Vite](https://vitejs.dev/)           | 🟢     |                                                                                                                                           |
+| [Astro](https://astro.build/)         | 🟡     |                                                                                                                                           |
+| [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                                                                                           |
+| [Farm](https://www.farmfe.org/)       | 🔴     | Tested & model files are not emitted (see [Issue #27](https://github.com/toddeTV/gltf-type-toolkit/issues/27)). Contributions welcome! ❤️ |
+| [Webpack](https://webpack.js.org/)    | 🔴     | Tested & model files are borked (see [Issue #30](https://github.com/toddeTV/gltf-type-toolkit/issues/30)). Contributions welcome! ❤️      |
 
 ## glTF Versions and Representations
 
