@@ -1,54 +1,68 @@
 import type { Compiler as RspackCompiler } from '@rspack/core'
-import type { UnpluginOptions } from 'unplugin'
+import type { UnpluginFactory } from 'unplugin'
 import type { Compiler as WebpackCompiler } from 'webpack'
-import { name } from '../../package.json'
+import type { Options } from '../types.js'
+import { name as pkgName } from '../../package.json'
+
+const name = `${pkgName}:base-path-detector`
 
 let basePath = '/'
 
 export function getBasePath(): string {
   return basePath
 }
+export const basePathDetector: UnpluginFactory<Options, false> = (options) => {
+  if (options.forceBasePath !== undefined) {
+    basePath = options.forceBasePath
 
-export const basePathDetector: UnpluginOptions = {
-  esbuild: {
-    config(options) {
-      if (options.publicPath) {
-        basePath = options.publicPath
-      }
+    // Nothing to do.
+
+    return {
+      name,
+    }
+  }
+
+  return {
+    esbuild: {
+      config(options) {
+        if (options.publicPath) {
+          basePath = options.publicPath
+        }
+      },
     },
-  },
 
-  farm: {
-    configResolved(config) {
-      if (config.compilation?.output?.publicPath) {
-        basePath = config.compilation.output.publicPath
-      }
+    farm: {
+      configResolved(config) {
+        if (config.compilation?.output?.publicPath) {
+          basePath = config.compilation.output.publicPath
+        }
+      },
     },
-  },
 
-  name: `${name}:base-path-detector`,
+    name,
 
-  rolldown: {
-    // Not possible.
-  },
-
-  rollup: {
-    // Not possible.
-  },
-
-  rspack(compiler) {
-    getWebpackBasePath(compiler)
-  },
-
-  vite: {
-    configResolved(config) {
-      basePath = config.base
+    rolldown: {
+      // Not possible.
     },
-  },
 
-  webpack(compiler) {
-    getWebpackBasePath(compiler)
-  },
+    rollup: {
+      // Not possible.
+    },
+
+    rspack(compiler) {
+      getWebpackBasePath(compiler)
+    },
+
+    vite: {
+      configResolved(config) {
+        basePath = config.base
+      },
+    },
+
+    webpack(compiler) {
+      getWebpackBasePath(compiler)
+    },
+  }
 }
 
 function getWebpackBasePath(compiler: WebpackCompiler | RspackCompiler): void {

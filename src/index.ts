@@ -7,9 +7,9 @@ import { createBuildStart } from './plugin/build-start.js'
 import { buildDetector } from './plugin/dev.js'
 import { createLoad, loadInclude } from './plugin/load.js'
 
-export const unpluginFactory: UnpluginFactory<Options | undefined, true> = options => [
-  buildDetector,
-  basePathDetector,
+export const unpluginFactory: UnpluginFactory<Options | undefined, true> = (options = {}, meta) => [
+  buildDetector(options, meta),
+  basePathDetector(options, meta),
   {
     buildStart: createBuildStart(options),
 

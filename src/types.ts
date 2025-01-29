@@ -8,4 +8,9 @@ export interface Options {
    * Print extra information.
    */
   verbose?: boolean
+
+  /**
+   * This string is prefixed to all model file references. If missing it will be guessed from your build tool.
+   */
+  forceBasePath?: string
 }
