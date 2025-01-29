@@ -291,7 +291,7 @@ This project is licensed under the MIT License, see the `LICENSE.md` file for mo
 [npm-version-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
 [npm-downloads-src]: https://img.shields.io/npm/dm/@todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
 [npm-downloads-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
-[bundle-size-src]: https://img.shields.io/bundlephobia/minzip/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[bundle-size-href]: https://bundlephobia.com/package/@toddeTV/gltf-type-toolkit
+[bundle-size-src]: https://img.shields.io/bundlephobia/minzip/@todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
+[bundle-size-href]: https://bundlephobia.com/package/@todde.tv/gltf-type-toolkit
 [license-src]: https://img.shields.io/github/license/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
 [license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE
