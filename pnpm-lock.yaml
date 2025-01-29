@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   changelogen:
-    hash: xwkzdw4qg5uuvw4dxg4675xs2y
+    hash: xh2gspttliri7nac7vqhshkkxu
     path: patches/changelogen.patch
   three-stdlib:
     hash: 5f6bxrj4z22jeteiqg3abdmvre
@@ -76,7 +76,7 @@ importers:
         version: 0.172.0
       changelogen:
         specifier: 0.5.7
-        version: 0.5.7(patch_hash=xwkzdw4qg5uuvw4dxg4675xs2y)(magicast@0.3.5)
+        version: 0.5.7(patch_hash=xh2gspttliri7nac7vqhshkkxu)(magicast@0.3.5)
       eslint:
         specifier: ~9.18.0
         version: 9.18.0(jiti@2.4.2)
@@ -6392,7 +6392,7 @@ snapshots:
 
   chalk@5.4.1: {}
 
-  changelogen@0.5.7(patch_hash=xwkzdw4qg5uuvw4dxg4675xs2y)(magicast@0.3.5):
+  changelogen@0.5.7(patch_hash=xh2gspttliri7nac7vqhshkkxu)(magicast@0.3.5):
     dependencies:
       c12: 1.11.2(magicast@0.3.5)
       colorette: 2.0.20
