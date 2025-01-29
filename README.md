@@ -294,4 +294,4 @@ This project is licensed under the MIT License, see the `LICENSE.md` file for mo
 [bundle-size-src]: https://img.shields.io/bundlephobia/minzip/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
 [bundle-size-href]: https://bundlephobia.com/package/@toddeTV/gltf-type-toolkit
 [license-src]: https://img.shields.io/github/license/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE
+[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE.md
