@@ -67,7 +67,7 @@ jobs:
 
               const cmdType = match[1];
               const cmdChangelog = match[2];
-              
+
               if(!allowedTypes.includes(cmdType)){
                 throw new Error(`Invalid release TYPE: ${cmdType}`);
               }
