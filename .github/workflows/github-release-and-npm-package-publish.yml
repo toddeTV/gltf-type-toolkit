@@ -13,9 +13,10 @@ jobs:
     permissions:
       contents: read
     outputs:
-      is_suffix_present: ${{ steps.check_create_release_suffix.outputs.is_suffix_present }}
-      is_version_bump: ${{ steps.check_create_release_suffix.outputs.is_version_bump }}
-      force_version: ${{ steps.check_create_release_suffix.outputs.force_version }}
+      do_release: ${{ steps.check_create_release_suffix.outputs.do_release }}
+      do_release_changelog_generation: ${{ steps.check_create_release_suffix.outputs.do_release_changelog_generation }}
+      do_release_version_bump: ${{ steps.check_create_release_suffix.outputs.do_release_version_bump }}
+      do_release_version_bump_force_version: ${{ steps.check_create_release_suffix.outputs.do_release_version_bump_force_version }}
     steps:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
@@ -23,22 +24,27 @@ jobs:
           ref: main # branch to checkout
           fetch-depth: 0
 
-      - name: Check commit message suffix for `[create-release-TYPE]`
+      - name: Check first line of commit message and search for commands `[rel-TYPE-CHANGELOG]`
         id: check_create_release_suffix
         uses: actions/github-script@v7
         with:
           script: |
-            // Get last commit message
             // context.sha === context.payload.head_commit.id
+
+            // Get first line of last commit message
             const lastCommitMessage = context.payload.head_commit.message;
             const lastCommitMessageFirstLine = lastCommitMessage.split('\n')[0];
 
-            let is_suffix_present = "false";
-            let is_version_bump = "false";
-            let force_version = "";
+            let do_release = "false";
+            let do_release_version_bump = "false";
+            let do_release_version_bump_force_version = "";
+            let do_release_changelog_generation = "false";
 
             const allowedTypes = [
+              "none",
+              // --------
               "auto",
+              // --------
               "major",
               "minor",
               "patch",
@@ -48,30 +54,50 @@ jobs:
               "prerelease",
             ];
 
-            const regex = /\[create-release(?:-([a-z]+))?\]/;
+            const allowedChangelog = [
+              "y",
+              "n",
+            ];
+
+            const regex = /\[rel-([a-z]+)-([a-z]+)\]/;
             const match = lastCommitMessageFirstLine.match(regex);
 
             if (match) {
-              is_suffix_present = "true";
-              if(match[1]){
-                if(!allowedTypes.includes(match[1])){
-                  throw new Error(`Invalid release TYPE: ${match[1]}`);
+              do_release = "true";
+
+              const cmdType = match[1];
+              const cmdChangelog = match[2];
+              
+              if(!allowedTypes.includes(cmdType)){
+                throw new Error(`Invalid release TYPE: ${cmdType}`);
+              }
+              if(!allowedChangelog.includes(cmdChangelog)){
+                throw new Error(`Invalid release CHANGELOG: ${cmdChangelog}`);
+              }
+
+              if(cmdType !== "none"){
+                do_release_version_bump = "true";
+                if(cmdType !== "auto"){
+                  do_release_version_bump_force_version = `--${cmdType}`;
                 }
-                is_version_bump = "true";
-                if(match[1] !== "auto"){
-                  force_version = `--${match[1]}`
-                }
+              }
+
+              if(cmdChangelog === "y"){
+                do_release_changelog_generation = "true";
               }
             }
 
-            console.dir(`Set output: is_suffix_present=${is_suffix_present}`);
-            core.setOutput("is_suffix_present", is_suffix_present);
+            console.dir(`Set output: do_release=${do_release}`);
+            core.setOutput("do_release", do_release);
 
-            console.dir(`Set output: is_version_bump=${is_version_bump}`);
-            core.setOutput("is_version_bump", is_version_bump);
+            console.dir(`Set output: do_release_version_bump=${do_release_version_bump}`);
+            core.setOutput("do_release_version_bump", do_release_version_bump);
 
-            console.dir(`Set output: force_version=${force_version}`);
-            core.setOutput("force_version", force_version);
+            console.dir(`Set output: do_release_version_bump_force_version=${do_release_version_bump_force_version}`);
+            core.setOutput("do_release_version_bump_force_version", do_release_version_bump_force_version);
+
+            console.dir(`Set output: do_release_changelog_generation=${do_release_changelog_generation}`);
+            core.setOutput("do_release_changelog_generation", do_release_changelog_generation);
 
   dependence-lint:
     name: Depend on Lint
@@ -81,7 +107,7 @@ jobs:
     needs:
       - check_conditions
       - dependence-lint
-    if: needs.check_conditions.outputs.is_suffix_present == 'true'
+    if: needs.check_conditions.outputs.do_release == 'true'
     name: Create GitHub Release & NPM Publish
     runs-on: ubuntu-latest
     permissions:
@@ -116,9 +142,9 @@ jobs:
       #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
 
       - name: Bump `package.json` version depending on given TYPE from commit message
-        if: needs.check_conditions.outputs.is_version_bump == 'true'
+        if: needs.check_conditions.outputs.do_release_version_bump == 'true'
         # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: pnpm changelogen --bump ${{ needs.check_conditions.outputs.force_version }} --no-commit --no-tag
+        run: pnpm changelogen --bump ${{ needs.check_conditions.outputs.do_release_version_bump_force_version }} --no-commit --no-tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -127,12 +153,14 @@ jobs:
         run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
 
       - name: Generate changelog from conventional commits
+        if: needs.check_conditions.outputs.do_release_changelog_generation == 'true'
         # -from "v${{ steps.get_package_version_old.outputs.version }}"
         run: pnpm changelogen --output CHANGELOG.md -r "${{ steps.get_package_version_new.outputs.version }}" --no-commit --no-tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Git add, commit & push changes made to `package.json` & `CHANGELOG.md` to `main`
+      - name: Git add, commit & push changes made to `main` (potentially `package.json` & `CHANGELOG.md`)
+        if: needs.check_conditions.outputs.do_release_version_bump == 'true' && needs.check_conditions.outputs.do_release_changelog_generation == 'true'
         run: |
           git add .
           git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
