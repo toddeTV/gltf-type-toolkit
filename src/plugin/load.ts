@@ -31,11 +31,13 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
   let path: string
 
   if (isBuild()) {
-  // TODO: Parse the binary for the json contents and process them like below.
-    // A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
-    // which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
-    // embedded binary buffer which must be the second chunk.
-    // For now we assume that a binary model file does NOT reference external files.
+    /*
+      TODO: Parse the binary for the json contents and process them like below.
+      A binary model contains one or two chunks of data. The first chunk (starting after 12 bytes) is encoded json
+      which can be extracted with TextDecoder according to the spec. This json can reference external buffers or the
+      embedded binary buffer which must be the second chunk.
+      For now we assume that a binary model file does NOT reference external files.
+    */
 
     // Emit the file.
 

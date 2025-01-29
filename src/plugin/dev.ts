@@ -54,7 +54,6 @@ function detectWebpackDevServer(compiler: WebpackCompiler | RspackCompiler, onDe
     ...compiler.options.devServer,
     onListening: () => {
       onDev()
-
       orig()
     },
   }
