@@ -8,8 +8,8 @@ index 901f6e360af4b6ea62758ebe28f0758d306a41f0..e8b5f4c3f9a94c7cd80344097950daea
  }
 -const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+)).*$/gm;
 -const VERSION_RE = /^v?(\d+\.\d+\.\d+)$/;
-+const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)).*$/gm;
-+const VERSION_RE = /^v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)$/;
++const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-([^.]+\.)?\d+)?)).*$/gm;
++const VERSION_RE = /^v?(\d+\.\d+\.\d+(-([^.]+\.)?\d+)?)$/;
  
  const defaultOutput = "CHANGELOG.md";
  const getDefaultConfig = () => ({
@@ -23,8 +23,8 @@ index 41e5865eb367763db7bc45aa1003bc0e7af4035b..e6dd6b133c4320c535541333d4954078
  }
 -const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+)).*$/gm;
 -const VERSION_RE = /^v?(\d+\.\d+\.\d+)$/;
-+const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)).*$/gm;
-+const VERSION_RE = /^v?(\d+\.\d+\.\d+(-(rc\.)?\d+)?)$/;
++const CHANGELOG_RELEASE_HEAD_RE = /^#{2,}\s+.*(v?(\d+\.\d+\.\d+(-([^.]+\.)?\d+)?)).*$/gm;
++const VERSION_RE = /^v?(\d+\.\d+\.\d+(-([^.]+\.)?\d+)?)$/;
  
  const defaultOutput = "CHANGELOG.md";
  const getDefaultConfig = () => ({
