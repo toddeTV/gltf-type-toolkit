@@ -160,7 +160,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Git add, commit & push changes made to `main` (potentially `package.json` & `CHANGELOG.md`)
-        if: needs.check_conditions.outputs.do_release_version_bump == 'true' && needs.check_conditions.outputs.do_release_changelog_generation == 'true'
+        if: needs.check_conditions.outputs.do_release_version_bump == 'true' || needs.check_conditions.outputs.do_release_changelog_generation == 'true'
         run: |
           git add .
           git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
