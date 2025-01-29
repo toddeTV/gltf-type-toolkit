@@ -58,7 +58,7 @@ The commit message trigger must be present in the main commit message, so to say
 ### GitHub Release & NPM Publishing
 
 Using the suffix `[rel-TYPE-CHANGELOG]` in a commit message on branch `main` will trigger the GitHub
-workflow (CI action) that uses `pnpx changelogen` under the hood to analyze the
+workflow (CI action) that uses `pnpm changelogen` under the hood to analyze the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from the last version to the current
 commit.
 
@@ -95,7 +95,7 @@ commit.
 - Creating a GitHub Release out of it
 - Publishing the package into the [NPM Registry](https://registry.npmjs.org/)
 
-You can use `pnpx changelogen --dry` to generate the new changelog in a dry run to preview in development.
+You can use `pnpm changelogen --dry` to generate the new changelog in a dry run to preview in development.
 
 ## Template Compilation and Usage
 
