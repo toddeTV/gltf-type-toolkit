@@ -51,18 +51,27 @@ type foo = { bar: 2 }
 
 [Why I don't use Prettier for every file type](https://antfu.me/posts/why-not-prettier)
 
-## GitHub Release & NPM Publishing
+## GitHub workflow commands inside commit messages
 
-Using the suffix `[create-release]` or `[create-release-TYPE]` in a commit message on branch `main` will trigger
-the GitHub workflow (CI action) that:
+The commit message trigger must be present in the main commit message, so to say the first line, not the description.
 
-- uses `pnpx changelogen` to analyze the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from
-  the last version to the current commit for:
-  - If no `TYPE` is present: Use the version from the `package.json` as target new version.<br>
-    So if the version already was changed via development this can be used to not bump another version on top.
-  - If no `TYPE` present: Bumping the version in `package.json` via:
-    - automatically when `TYPE` is `auto` depending on the detected semver changes.
-    - manually with the following `TYPE`:
+### GitHub Release & NPM Publishing
+
+Using the suffix `[rel-TYPE-CHANGELOG]` in a commit message on branch `main` will trigger the GitHub
+workflow (CI action) that uses `pnpx changelogen` under the hood to analyze the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from the last version to the current
+commit.
+
+#### Allowed parameter
+
+- `TYPE` can be:
+
+  - `none` will take the version from `package.json` as new version (best if you already set the wanted new version
+    locally and pushed it)
+  - All other types will bump the version in `package.json` like the following:
+    - automatically:
+      - `auto`: Bump the version depending on the detected semver changes.
+    - manually by forcing a version increase:
       - `major`: Bump as a semver-major version
       - `minor`: Bump as a semver-minor version
       - `patch`: Bump as a semver-patch version
@@ -70,8 +79,18 @@ the GitHub workflow (CI action) that:
       - `preminor`: Bump as a semver-preminor version, can set id with string.
       - `prepatch`: Bump as a semver-prepatch version, can set id with string.
       - `prerelease`: Bump as a semver-prerelease version, can set id with string.
-  - creating a new changelog entry in `CHANGELOG.md` from the last version to the new version
-- Committing these changes as author `github-actions[bot] <no-reply@todde.tv>` directly on branch `main`
+
+- `CHANGELOG` can be:
+
+  - `n` for using the given `CHANGELOG.md` without updates (best if you already created it locally and pushed it)
+  - `y` for updating the `CHANGELOG.md` according to the semver commit messages from last version tag to current
+    commit (recommended)
+
+#### logic
+
+- evaluate the parameter and work accordingly
+- \[optional\] Committing changes as author `github-actions[bot] <no-reply@todde.tv>` directly on branch `main` if
+  changes were made
 - Creating a tag at the new version commit on with the version number
 - Creating a GitHub Release out of it
 - Publishing the package into the [NPM Registry](https://registry.npmjs.org/)
