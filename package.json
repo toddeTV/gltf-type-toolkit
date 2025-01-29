@@ -1,7 +1,7 @@
 {
   "name": "@todde.tv/gltf-type-toolkit",
   "type": "module",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0",
   "packageManager": "pnpm@9.15.4",
   "description": "This plugin generates type-safe glTF file representations in TypeScript and optimizes the loading and bundling of models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esbuild, Rspack, ...).",
   "author": "Thorsten Seyschab <business@todde.tv> (https://todde.tv/)",
