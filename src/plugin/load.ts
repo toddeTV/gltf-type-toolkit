@@ -2,11 +2,12 @@ import type { UnpluginBuildContext, UnpluginOptions } from 'unplugin'
 import type { Options } from '../types.js'
 import { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
-import { basename, dirname, parse, relative, resolve } from 'node:path'
+import { basename, dirname, join, parse, relative, resolve } from 'node:path'
 import { cwd } from 'node:process'
 import { xxh3 } from '@node-rs/xxhash'
 import { BINARY_GLTF_MODEL_EXTENSION, JSON_LOAD_MARKER, SEPARATE_GLTF_MODEL_EXTENSION } from '../core/constants.js'
 import { handleReferencedModelFiles, isGltfModelFile } from '../core/utils/find-models.js'
+import { getBasePath } from './base-path.js'
 import { isBuild } from './dev.js'
 
 // TODO: Do we have to handle base paths when building file paths? Can we even get it in bundler-agnostic way?
@@ -41,7 +42,7 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
 
     // Emit the file.
 
-    path = await emitAssetFromFile.call(this, modelFile)
+    path = join(getBasePath(), await emitAssetFromFile.call(this, modelFile))
   }
   else {
     // Just pass the relative path.
@@ -64,7 +65,7 @@ async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: stri
 
     await handleGltfJson.call(this, rawGltf, modelFile)
 
-    path = emitAsset.call(this, modelFile, Buffer.from(JSON.stringify(rawGltf)))
+    path = join(getBasePath(), emitAsset.call(this, modelFile, Buffer.from(JSON.stringify(rawGltf))))
   }
   else {
     // During dev return the original path with specifier to load it later. This prevents it from triggering the load
