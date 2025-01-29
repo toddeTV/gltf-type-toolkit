@@ -33,6 +33,7 @@
 
 ### 📖 Documentation
 
+- Add project doc with installation, logic, limits, usage, etc. ([#11](https://github.com/toddeTV/gltf-type-toolkit/pull/11))
 - Update & polish documentation for clarity & consistency ([#19](https://github.com/toddeTV/gltf-type-toolkit/pull/19))
 - Update idea behind the scenes section ([#28](https://github.com/toddeTV/gltf-type-toolkit/pull/28))
 
