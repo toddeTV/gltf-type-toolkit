@@ -40,6 +40,7 @@
 
 - Add contributor ([#10](https://github.com/toddeTV/gltf-type-toolkit/pull/10))
 - Rename unplugin plugins to match repo name ([#14](https://github.com/toddeTV/gltf-type-toolkit/pull/14))
+- **release:** v1.0.0 [rel-none-n] ([#36](https://github.com/toddeTV/gltf-type-toolkit/pull/36))
 
 ### ❤️ Contributors
 
