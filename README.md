@@ -2,7 +2,6 @@
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle size][bundle-size-src]][bundle-size-href]
 [![license][license-src]][license-href]
 
 This plugin generates type-safe glTF file representations in TypeScript and optimizes the loading and bundling of
@@ -291,7 +290,9 @@ This project is licensed under the MIT License, see the `LICENSE.md` file for mo
 [npm-version-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
 [npm-downloads-src]: https://img.shields.io/npm/dm/@todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
 [npm-downloads-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
-[bundle-size-src]: https://img.shields.io/bundlephobia/minzip/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[bundle-size-href]: https://bundlephobia.com/package/@toddeTV/gltf-type-toolkit
 [license-src]: https://img.shields.io/github/license/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE
+[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE.md
+
+<!-- Not used, as we are a build tool plugin. If our goal were to minimize size, we should ship one plugin per build tool, rather than a single agnostic plugin for all. -->
+<!-- [bundle-size-src]: https://img.shields.io/bundlephobia/minzip/todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a -->
+<!-- [bundle-size-href]: https://bundlephobia.com/package/@todde.tv/gltf-type-toolkit -->
