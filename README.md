@@ -50,8 +50,6 @@ With this plugin you get:
   - [Angular](https://angular.dev/)
   - ...
 
-It will run when your dev server starts and also when you build your project.
-
 ## Sponsoring
 
 If you like this plugin and want to support us, we would be very happy to see you as a sponsor on GitHub ❤️<br>
@@ -68,20 +66,24 @@ For development-related information, including setup instructions for contributo
 
 ### Installation
 
-1. Install with your package manager (we use pnpm and recommend it):<br>
+1. Install with your package manager (we use pnpm and recommend it):
+
    ```bash
-   # choose only one
+   # choose your package manager
    pnpm add -D @todde.tv/gltf-type-toolkit
    npm install --save-dev @todde.tv/gltf-type-toolkit
    yarn add --dev @todde.tv/gltf-type-toolkit
    bun add --dev @todde.tv/gltf-type-toolkit
    ```
+
 2. Extend your `.gitignore` file to exclude generated files:
+
    ```sh
    # Generated glTF model files
    *.gltf.d.ts
    *.gltf.js
    ```
+
 3. Add the plugin to your build tool, for example with [Vite](https://vitejs.dev/):
 
    ```ts
@@ -107,15 +109,24 @@ For development-related information, including setup instructions for contributo
 
 ### usage example with explanations
 
+The plugin will run on:
+
+- on dependency installation
+- on dev server start
+- on project build
+
 Here's an example of how to use the plugin. You can customize this example to suit your needs, such as saving models
 to different folders, changing paths, or adjusting how the model is handled after import.
 
 1. Install the plugin (See [Installation](#installation) above).
+
 2. Add a model to your project, here in the project source under `@/assets/models`. We copy the following in it:
+
    1. `MyModel.gltf` The glTF JSON representation that describes the model.
    2. `MyModel.bin` The binary file of the model, compressed with the [Draco Compression](https://github.com/google/draco).
    3. `MyModel-texture1.png` A texture that the model uses.
    4. `MyModel-texture2.png` A second texture that the model uses.
+
 3. Start your dev to generate all files. With our example model we get:
 
    ```diff
@@ -261,8 +272,8 @@ Project founder & head of project:
 
 Honorable mentions to people that helped this project:
 
-- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project and the magic
-  behind the core. Thank you <3
+- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project. Thank you mate,
+  you rock <3
 
 Respectable mentions to projects that helped this project:
 
