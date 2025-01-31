@@ -60,7 +60,7 @@ Thanks a lot for the support <3
 ## Developer Documentation
 
 For development-related information, including setup instructions for contributors, please refer to the
-[Developer README](./README.dev.md).
+Developer README [`README-dev.md`](./README-dev.md).
 
 ## Getting Started
 
