@@ -10,8 +10,8 @@ models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esb
 ## project overview
 
 This plugin scans all model files in the project source, deconstructs the glTF JSON representation, and places
-generated type files next to them. It uses [three.js](https://github.com/mrdoob/three.js/) to parse the glTF files,
-including modifications like path resolutions etc.
+generated type files next to them. It creates [three.js](https://github.com/mrdoob/three.js/) types and uses
+it internally to parse the glTF files, including modifications like path resolutions etc.
 
 With this plugin you get:
 
@@ -47,6 +47,7 @@ With this plugin you get:
   - [React](https://react.dev/)
   - [Svelte](https://svelte.dev/)
   - [Vue3](https://vuejs.org/)
+  - [Angular](https://angular.dev/)
   - ...
 
 It will run when your dev server starts and also when you build your project.
