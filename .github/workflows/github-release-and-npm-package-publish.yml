@@ -134,6 +134,10 @@ jobs:
       # - name: Pack the project
       #   run: pnpm pack
 
+      # # pack the project in a archive for publishing, e.g. `todde.tv-gltf-type-toolkit-1.0.0.tgz`
+      # - name: Pack the project
+      #   run: pnpm pack
+
       # - name: Publish package to NPM
       #   if: github.ref == 'refs/heads/main'
       #   run: pnpm publish --access public
