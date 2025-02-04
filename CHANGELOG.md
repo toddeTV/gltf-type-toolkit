@@ -1,4 +1,27 @@
 
+## v1.1.0
+
+[compare changes](https://github.com/toddeTV/gltf-type-toolkit/compare/v1.0.0...v1.1.0)
+
+### 🚀 Enhancements
+
+- New release & publish GitHub workflow ([#45](https://github.com/toddeTV/gltf-type-toolkit/pull/45))
+
+### 🩹 Fixes
+
+- Prevent duplicate parsing of the same model ([#39](https://github.com/toddeTV/gltf-type-toolkit/pull/39))
+
+### 📖 Documentation
+
+- Fix badges in README ([#37](https://github.com/toddeTV/gltf-type-toolkit/pull/37))
+- Add content, refactor content & rename dev README ([#43](https://github.com/toddeTV/gltf-type-toolkit/pull/43))
+- Add Nuxt tested & add hyperlink to LICENSE file ([#47](https://github.com/toddeTV/gltf-type-toolkit/pull/47))
+
+### ❤️ Contributors
+
+- Thorsten Seyschab ([@toddeTV](http://github.com/toddeTV))
+- Andreas Fehn <fehnomenal@fehn.systems>
+
 ## v1.0.0
 
 
