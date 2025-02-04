@@ -30,7 +30,62 @@ Development VM ID from Thorsten for this project: `014`<br>
 6. Install dependencies: `pnpm i`
 7. Happy coding <3
 
-## GitHub workflow commands inside commit messages
+## Create a release
+
+When the variable `{VERSION}` is used in the following, then the exact string from field `version` of the
+`package.json` is meant, so to say the new version that the software will have after the release without
+prefixes like `v`.
+
+1. Do not merge new things while the release is prepared, so stop it here until done.
+2. Check out branch `main` locally.
+3. Let us reset possible local disparities & test if the lockfile is healthy:
+   ```sh
+   rm -rf node_modules/ dist/
+   pnpm install --frozen-lockfile
+   ```
+4. Let us now find what the new version should be, therefore you have two ways to go:
+   1. Variant 1: automatically detect new version depending on conventional commits of the commit messages since
+      the old version
+      1. bump the new version in `package.json` depending on conventional commits of the commit messages since the
+         old version and generate a new entry in `CHANGELOG.md`.<br>
+         (You could force a verion bump, but this is not what we whant. But see
+         [Doc](https://github.com/unjs/changelogen?tab=readme-ov-file#cli-usage) for details.)
+         ```sh
+         pnpm changelogen --no-commit --no-tag --bump [--{FORCE_VERSION}]
+         ```
+      2. See the changes made in `package.json` and `CHANGELOG.md` and check if the version is reasonable.
+      3. Reset the changelog bc we will generate it later again:
+         ```sh
+         git checkout "CHANGELOG.md"
+         ```
+   2. Variant 2: manually set a new version
+      1. Open the `package.json` and write the wanted version in the `version` field.
+5. Use the following to create a changelog for the new version:
+   ```sh
+   pnpm changelogen --output CHANGELOG.md -r "{VERSION}" --no-commit --no-tag
+   ```
+6. Create a branch with the name `rel/v{VERSION}` so that the made changes that are not committed yet are on there.
+7. Commit the made changes to the branch.<br>
+   (You can use whatever commit message you want to use, e.g. `chore: prepare release v{VERSION}`.)
+8. Create a PR on GitHub for the branch to be merged to `main` with the title: `chore(release): v{VERSION}`
+9. Open `CHANGELOG.md`.
+   1. Directly after the headline `## v{VERSION}` add the following with correctly changed content:
+      ```md
+      Compare changes [from v{VERSION-old} to v{VERSION}](https://github.com/toddeTV/gltf-type-toolkit/compare/v{VERSION-old}...v{VERSION})
+      or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
+      ```
+   2. In the `### 🏡 Chore` section (always the last before `### ❤️ Contributors`) add a new line at the end with the
+      correct content for `{VERSION}` and `{PR_NUMBER}`:
+      ```md
+      - **release:** v{VERSION} ([#{PR_NUMBER}](https://github.com/toddeTV/gltf-type-toolkit/pull/{PR_NUMBER}))
+      ```
+   3. [optional] Change more things if needed (e.g. add description text at the top, ...)
+10. Commit the made changes to the branch.<br>
+    (You can use whatever commit message you want to use, e.g. `chore: add current release PR to changelog`.)
+11. Squash & merge the GitHub PR to `main`.
+12. The GitHub workflow action defined in the file `github-release-and-npm-package-publish.yml` will create a
+    GitHub Release & a NPM package publishing for the new version.
+13. Now you can continue merging new things, the release is done.
 
 The commit message trigger must be present in the main commit message, so to say the first line, not the description.
 
