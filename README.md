@@ -167,12 +167,12 @@ resulting in the following compatibility in our project:
 | Build Tool                            | Status | Note                                                                                                                                      |
 | ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | [esbuild](https://esbuild.github.io/) | 🟢     |                                                                                                                                           |
+| [Nuxt3](https://nuxt.com/)            | 🟢     |                                                                                                                                           |
 | [Rolldown](https://rolldown.rs/)      | 🟢     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin)                                                                 |
 | [Rollup](https://rollupjs.org/)       | 🟢     |                                                                                                                                           |
 | [Rspack](https://www.rspack.dev/)     | 🟢     |                                                                                                                                           |
 | [Vite](https://vitejs.dev/)           | 🟢     |                                                                                                                                           |
 | [Astro](https://astro.build/)         | 🟡     |                                                                                                                                           |
-| [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                                                                                           |
 | [Farm](https://www.farmfe.org/)       | 🔴     | Tested & model files are not emitted (see [Issue #27](https://github.com/toddeTV/gltf-type-toolkit/issues/27)). Contributions welcome! ❤️ |
 | [Webpack](https://webpack.js.org/)    | 🔴     | Tested & model files are borked (see [Issue #30](https://github.com/toddeTV/gltf-type-toolkit/issues/30)). Contributions welcome! ❤️      |
 
@@ -294,7 +294,7 @@ Used assets/ materials including images and 3D models:
 ## License
 
 Copyright (c) 2025-PRESENT [Thorsten Seyschab](https://todde.tv)<br>
-This project is licensed under the MIT License, see the `LICENSE.md` file for more details.
+This project is licensed under the MIT License, see the [`LICENSE.md`](./LICENSE.md) file for more details.
 
 <!-- Badges -->
 
