@@ -71,8 +71,7 @@ prefixes like `v`.
 9. Open `CHANGELOG.md`.
    1. Directly after the headline `## v{VERSION}` add the following with correctly changed content:
       ```md
-      Compare changes [from v{VERSION-old} to v{VERSION}](https://github.com/toddeTV/gltf-type-toolkit/compare/v{VERSION-old}...v{VERSION})
-      or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
+      Compare changes [from v{VERSION-old} to v{VERSION}](https://github.com/toddeTV/gltf-type-toolkit/compare/v{VERSION-old}...v{VERSION}) or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
       ```
    2. In the `### 🏡 Chore` section (always the last before `### ❤️ Contributors`) add a new line at the end with the
       correct content for `{VERSION}` and `{PR_NUMBER}`:
