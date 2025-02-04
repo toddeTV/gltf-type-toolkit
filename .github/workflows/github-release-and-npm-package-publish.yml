@@ -35,6 +35,9 @@ jobs:
 
             const versionRegex = "\\d+\\.\\d+\\.\\d+(-rc\\.\\d+)?" // allowed: `1.0.0`, `1.0.0-rc.1`
 
+            // set default output that may be overwritten later
+            setOutput("success", 0) // default: false
+
             // helper function to set output with logging
             function setOutput(key, value) {
               console.dir(`:: set output: ${key}=${value}`)
@@ -51,10 +54,7 @@ jobs:
             const match_commitMessage = lastCommitMessageFirstLine.match(regex_commitMessage)
 
             if (!match_commitMessage || !match_commitMessage.groups?.version) {
-              const msg = `Invalid commit message: ${lastCommitMessageFirstLine}`
-              // throw new Error(msg)
-              console.dir(msg)
-              setOutput("success", 0)
+              console.dir(`Invalid commit message: ${lastCommitMessageFirstLine}`)
               return
             }
 
@@ -69,20 +69,14 @@ jobs:
             const match_packageJson = version_byPackageJson.match(regex_packageJson)
 
             if (!match_packageJson) {
-              const msg = `Invalid version in package.json: ${version_byPackageJson}`
-              // throw new Error(msg)
-              console.dir(msg)
-              setOutput("success", 0)
+              console.dir(`Invalid version in package.json: ${version_byPackageJson}`)
               return
             }
 
             // ==== compare all versions ====
 
             if (version_byCommitMessage !== version_byPackageJson) {
-              const msg = `Versions are not equal: ${version_byCommitMessage} (commit message) !== ${version_byPackageJson} (package.json)`
-              // throw new Error(msg)
-              console.dir(msg)
-              setOutput("success", 0)
+              console.dir(`Versions are not equal: ${version_byCommitMessage} (commit message) !== ${version_byPackageJson} (package.json)`)
               return
             }
 
