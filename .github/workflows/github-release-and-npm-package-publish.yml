@@ -13,7 +13,8 @@ jobs:
     permissions:
       contents: read
     outputs:
-      version: ${{ steps.check_workflow_conditions.outputs.version }}
+      success: ${{ steps.check_workflow_conditions.outputs.success }}
+      appVersion: ${{ steps.check_workflow_conditions.outputs.appVersion }}
     steps:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
@@ -23,9 +24,9 @@ jobs:
 
       # - name: Get `package.json` version
       #   id: get_package_version
-      #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+      #   run: echo appVersion=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
         
-      - name: Check first line of commit message and search for commands `[rel-TYPE-CHANGELOG]`
+      - name: Check workflow conditions to create a release on the current commit
         id: check_workflow_conditions
         uses: actions/github-script@v7
         with:
@@ -33,6 +34,12 @@ jobs:
             const fs = require('fs').promises
 
             const versionRegex = "\\d+\\.\\d+\\.\\d+(-rc\\.\\d+)?" // allowed: `1.0.0`, `1.0.0-rc.1`
+
+            // helper function to set output with logging
+            function setOutput(key, value) {
+              console.dir(`:: set output: ${key}=${value}`)
+              core.setOutput(key, value)
+            }
             
             // ==== commit message ====
 
@@ -40,40 +47,52 @@ jobs:
             const lastCommitMessage = context?.payload?.head_commit.message ?? context?.payload?.commits[0]?.message
             const lastCommitMessageFirstLine = lastCommitMessage?.split('\n')[0] ?? ''
 
-            const regex_commitMessage = new RegExp(`^chore\(release\): v(${versionRegex}) \(#\d+\)$`, "g")
+            const regex_commitMessage = new RegExp(`^chore\\(release\\): v(?<version>${versionRegex}) \\(#\\d+\\)$`, "s")
             const match_commitMessage = lastCommitMessageFirstLine.match(regex_commitMessage)
 
-            if (!match_commitMessage) {
-              throw new Error(`Invalid commit message: ${lastCommitMessageFirstLine}`)
+            if (!match_commitMessage || !match_commitMessage.groups?.version) {
+              const msg = `Invalid commit message: ${lastCommitMessageFirstLine}`
+              // throw new Error(msg)
+              console.dir(msg)
+              setOutput("success", 0)
+              return
             }
 
-            const version_byCommitMessage = match_commitMessage[1]
+            const version_byCommitMessage = match_commitMessage.groups.version
 
             // ==== version in `package.json` ====
 
             const packageJson = await fs.readFile('package.json', 'utf8')
             const { version: version_byPackageJson } = JSON.parse(packageJson)
 
-            const regex_packageJson = new RegExp(`^(${versionRegex})$`, "g")
-            const match_packageJson = lastPackageJsonFirstLine.match(regex_packageJson)
+            const regex_packageJson = new RegExp(`^(${versionRegex})$`, "s")
+            const match_packageJson = version_byPackageJson.match(regex_packageJson)
 
             if (!match_packageJson) {
-              throw new Error(`Invalid version in package.json: ${version_byPackageJson}`)
+              const msg = `Invalid version in package.json: ${version_byPackageJson}`
+              // throw new Error(msg)
+              console.dir(msg)
+              setOutput("success", 0)
+              return
             }
 
             // ==== compare all versions ====
 
             if (version_byCommitMessage !== version_byPackageJson) {
-              throw new Error(`Versions are not equal: ${version_byCommitMessage} (commit message) !== ${version_byPackageJson} (package.json)`)
+              const msg = `Versions are not equal: ${version_byCommitMessage} (commit message) !== ${version_byPackageJson} (package.json)`
+              // throw new Error(msg)
+              console.dir(msg)
+              setOutput("success", 0)
+              return
             }
 
             // the versions are equal, so just take one of them
-            const version = version_byCommitMessage
+            const appVersion = version_byCommitMessage
 
             // ==== set outputs ====
 
-            console.dir(`Set output: version=${version}`)
-            core.setOutput("version", version)
+            setOutput("appVersion", appVersion)
+            setOutput("success", 1)
 
   dependence-lint:
     name: Depend on Lint
@@ -83,7 +102,8 @@ jobs:
     needs:
       - check_conditions
       - dependence-lint
-    # if: needs.check_conditions.outputs.do_release == 'true'
+    # only run if the conditions are met, and bc booleans are not supported, we use integers (false=0, true=1)
+    if: needs.check_conditions.outputs.success == 1
     name: Create GitHub Release & NPM Publish
     runs-on: ubuntu-latest
     permissions:
@@ -92,7 +112,7 @@ jobs:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
         with:
-          ref: main # branch to checkout
+          # ref: main # branch to checkout, but the workflow already only runs on `main`
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -121,18 +141,14 @@ jobs:
 
       - name: Create a tag
         run: |
-          git tag -a "v${{ needs.check_conditions.outputs.version }}" -m "Release v${{ needs.check_conditions.outputs.version }}"
+          git tag -a "v${{ needs.check_conditions.outputs.appVersion }}" -m "Release v${{ needs.check_conditions.outputs.appVersion }}"
           git push origin --tags
 
       - name: Sync tags with GitHub releases & create the new release
         # run: pnpm changelogen gh release all
-        run: pnpm changelogen gh release "v${{ needs.check_conditions.outputs.version }}"
+        run: pnpm changelogen gh release "v${{ needs.check_conditions.outputs.appVersion }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # # pack the project in a archive for publishing, e.g. `todde.tv-gltf-type-toolkit-1.0.0.tgz`
-      # - name: Pack the project
-      #   run: pnpm pack
 
       # # pack the project in a archive for publishing, e.g. `todde.tv-gltf-type-toolkit-1.0.0.tgz`
       # - name: Pack the project
