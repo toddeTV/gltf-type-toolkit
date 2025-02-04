@@ -8,96 +8,85 @@ on:
 
 jobs:
   check_conditions:
-    name: Check conditions to create & release
+    name: Check conditions to create & publish a release
     runs-on: ubuntu-latest
     permissions:
       contents: read
     outputs:
-      do_release: ${{ steps.check_create_release_suffix.outputs.do_release }}
-      do_release_changelog_generation: ${{ steps.check_create_release_suffix.outputs.do_release_changelog_generation }}
-      do_release_version_bump: ${{ steps.check_create_release_suffix.outputs.do_release_version_bump }}
-      do_release_version_bump_force_version: ${{ steps.check_create_release_suffix.outputs.do_release_version_bump_force_version }}
+      success: ${{ steps.check_workflow_conditions.outputs.success }}
+      appVersion: ${{ steps.check_workflow_conditions.outputs.appVersion }}
     steps:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
         with:
-          ref: main # branch to checkout
+          # ref: main # branch to checkout, but we use the provided branch by the event
           fetch-depth: 0
 
-      - name: Check first line of commit message and search for commands `[rel-TYPE-CHANGELOG]`
-        id: check_create_release_suffix
+      # - name: Get `package.json` version
+      #   id: get_package_version
+      #   run: echo appVersion=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
+
+      - name: Check workflow conditions to create a release on the current commit
+        id: check_workflow_conditions
         uses: actions/github-script@v7
         with:
           script: |
-            // context.sha === context.payload.head_commit.id
+            const fs = require('fs').promises
 
-            // Get first line of last commit message
-            const lastCommitMessage = context.payload.head_commit.message;
-            const lastCommitMessageFirstLine = lastCommitMessage.split('\n')[0];
+            const versionRegex = "\\d+\\.\\d+\\.\\d+(-rc\\.\\d+)?" // allowed: `1.0.0`, `1.0.0-rc.1`
 
-            let do_release = "false";
-            let do_release_version_bump = "false";
-            let do_release_version_bump_force_version = "";
-            let do_release_changelog_generation = "false";
+            // set default output that may be overwritten later
+            setOutput("success", 0) // default: false
 
-            const allowedTypes = [
-              "none",
-              // --------
-              "auto",
-              // --------
-              "major",
-              "minor",
-              "patch",
-              "premajor",
-              "preminor",
-              "prepatch",
-              "prerelease",
-            ];
-
-            const allowedChangelog = [
-              "y",
-              "n",
-            ];
-
-            const regex = /\[rel-([a-z]+)-([a-z]+)\]/;
-            const match = lastCommitMessageFirstLine.match(regex);
-
-            if (match) {
-              do_release = "true";
-
-              const cmdType = match[1];
-              const cmdChangelog = match[2];
-
-              if(!allowedTypes.includes(cmdType)){
-                throw new Error(`Invalid release TYPE: ${cmdType}`);
-              }
-              if(!allowedChangelog.includes(cmdChangelog)){
-                throw new Error(`Invalid release CHANGELOG: ${cmdChangelog}`);
-              }
-
-              if(cmdType !== "none"){
-                do_release_version_bump = "true";
-                if(cmdType !== "auto"){
-                  do_release_version_bump_force_version = `--${cmdType}`;
-                }
-              }
-
-              if(cmdChangelog === "y"){
-                do_release_changelog_generation = "true";
-              }
+            // helper function to set output with logging
+            function setOutput(key, value) {
+              console.dir(`:: set output: ${key}=${value}`)
+              core.setOutput(key, value)
             }
 
-            console.dir(`Set output: do_release=${do_release}`);
-            core.setOutput("do_release", do_release);
+            // ==== commit message ====
 
-            console.dir(`Set output: do_release_version_bump=${do_release_version_bump}`);
-            core.setOutput("do_release_version_bump", do_release_version_bump);
+            // Get first line of last commit message
+            const lastCommitMessage = context?.payload?.head_commit.message ?? context?.payload?.commits[0]?.message
+            const lastCommitMessageFirstLine = lastCommitMessage?.split('\n')[0] ?? ''
 
-            console.dir(`Set output: do_release_version_bump_force_version=${do_release_version_bump_force_version}`);
-            core.setOutput("do_release_version_bump_force_version", do_release_version_bump_force_version);
+            const regex_commitMessage = new RegExp(`^chore\\(release\\): v(?<version>${versionRegex}) \\(#\\d+\\)$`, "s")
+            const match_commitMessage = lastCommitMessageFirstLine.match(regex_commitMessage)
 
-            console.dir(`Set output: do_release_changelog_generation=${do_release_changelog_generation}`);
-            core.setOutput("do_release_changelog_generation", do_release_changelog_generation);
+            if (!match_commitMessage || !match_commitMessage.groups?.version) {
+              console.dir(`Invalid commit message: ${lastCommitMessageFirstLine}`)
+              return
+            }
+
+            const version_byCommitMessage = match_commitMessage.groups.version
+
+            // ==== version in `package.json` ====
+
+            const packageJson = await fs.readFile('package.json', 'utf8')
+            const { version: version_byPackageJson } = JSON.parse(packageJson)
+
+            const regex_packageJson = new RegExp(`^(${versionRegex})$`, "s")
+            const match_packageJson = version_byPackageJson.match(regex_packageJson)
+
+            if (!match_packageJson) {
+              console.dir(`Invalid version in package.json: ${version_byPackageJson}`)
+              return
+            }
+
+            // ==== compare all versions ====
+
+            if (version_byCommitMessage !== version_byPackageJson) {
+              console.dir(`Versions are not equal: ${version_byCommitMessage} (commit message) !== ${version_byPackageJson} (package.json)`)
+              return
+            }
+
+            // the versions are equal, so just take one of them
+            const appVersion = version_byCommitMessage
+
+            // ==== set outputs ====
+
+            setOutput("appVersion", appVersion)
+            setOutput("success", 1)
 
   dependence-lint:
     name: Depend on Lint
@@ -107,7 +96,8 @@ jobs:
     needs:
       - check_conditions
       - dependence-lint
-    if: needs.check_conditions.outputs.do_release == 'true'
+    # only run if the conditions are met, and bc booleans are not supported, we use integers (false=0, true=1)
+    if: needs.check_conditions.outputs.success == 1
     name: Create GitHub Release & NPM Publish
     runs-on: ubuntu-latest
     permissions:
@@ -116,7 +106,7 @@ jobs:
       - name: Checkout the Codebase
         uses: actions/checkout@v4
         with:
-          ref: main # branch to checkout
+          # ref: main # branch to checkout, but the workflow already only runs on `main`
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -134,54 +124,29 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "no-reply@todde.tv"
 
+      # do all code related stuff early to catch if something is wrong and it fails
+      # TODO create a workflow like `Lint` to test install by lockfile and build
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # - name: Get old `package.json` version
-      #   id: get_package_version_old
-      #   run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
-
-      - name: Bump `package.json` version depending on given TYPE from commit message
-        if: needs.check_conditions.outputs.do_release_version_bump == 'true'
-        # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: pnpm changelogen --bump ${{ needs.check_conditions.outputs.do_release_version_bump_force_version }} --no-commit --no-tag
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Get new `package.json` version
-        id: get_package_version_new
-        run: echo version=$(node -p "require('./package.json').version") >> $GITHUB_OUTPUT
-
-      - name: Generate changelog from conventional commits
-        if: needs.check_conditions.outputs.do_release_changelog_generation == 'true'
-        # -from "v${{ steps.get_package_version_old.outputs.version }}"
-        run: pnpm changelogen --output CHANGELOG.md -r "${{ steps.get_package_version_new.outputs.version }}" --no-commit --no-tag
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Git add, commit & push changes made to `main` (potentially `package.json` & `CHANGELOG.md`)
-        if: needs.check_conditions.outputs.do_release_version_bump == 'true' || needs.check_conditions.outputs.do_release_changelog_generation == 'true'
-        run: |
-          git add .
-          git commit -m "chore(release): v${{ steps.get_package_version_new.outputs.version }}"
-          git push origin main
+      - name: Build the project
+        run: pnpm run build
 
       - name: Create a tag
         run: |
-          git tag -a "v${{ steps.get_package_version_new.outputs.version }}" -m "Release v${{ steps.get_package_version_new.outputs.version }}"
+          git tag -a "v${{ needs.check_conditions.outputs.appVersion }}" -m "Release v${{ needs.check_conditions.outputs.appVersion }}"
           git push origin --tags
 
       - name: Sync tags with GitHub releases & create the new release
         # run: pnpm changelogen gh release all
-        run: pnpm changelogen gh release "v${{ steps.get_package_version_new.outputs.version }}"
+        run: pnpm changelogen gh release "v${{ needs.check_conditions.outputs.appVersion }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Install dependencies
-      #   run: pnpm install --frozen-lockfile
-
-      - name: Build the project
-        run: pnpm run build
+      # # pack the project in a archive for publishing, e.g. `todde.tv-gltf-type-toolkit-1.0.0.tgz`
+      # - name: Pack the project
+      #   run: pnpm pack
 
       # - name: Publish package to NPM
       #   if: github.ref == 'refs/heads/main'
