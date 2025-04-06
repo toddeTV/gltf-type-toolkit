@@ -42,13 +42,15 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
 
     // Emit the file.
 
-    path = join(getBasePath(), await emitAssetFromFile.call(this, modelFile))
+    path = await emitAssetFromFile.call(this, modelFile)
   }
   else {
     // Just pass the relative path.
 
     path = getRelativeProjectPathToFile(modelFile)
   }
+
+  path = join(getBasePath(), path)
 
   return {
     code: `export default ${JSON.stringify(path)};`,
@@ -65,7 +67,7 @@ async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: stri
 
     await handleGltfJson.call(this, rawGltf, modelFile)
 
-    path = join(getBasePath(), emitAsset.call(this, modelFile, Buffer.from(JSON.stringify(rawGltf))))
+    path = emitAsset.call(this, modelFile, Buffer.from(JSON.stringify(rawGltf)))
   }
   else {
     // During dev return the original path with specifier to load it later. This prevents it from triggering the load
@@ -73,6 +75,8 @@ async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: stri
 
     path = getRelativeProjectPathToFile(modelFile) + JSON_LOAD_MARKER
   }
+
+  path = join(getBasePath(), path)
 
   return {
     code: `export default ${JSON.stringify(path)};`,
