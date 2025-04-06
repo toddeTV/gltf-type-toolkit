@@ -2,12 +2,12 @@ import type { UnpluginBuildContext, UnpluginOptions } from 'unplugin'
 import type { Options } from '../types.js'
 import { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
-import { basename, dirname, join, parse, relative, resolve } from 'node:path'
+import { basename, dirname, parse, relative, resolve } from 'node:path'
 import { cwd } from 'node:process'
 import { xxh3 } from '@node-rs/xxhash'
 import { BINARY_GLTF_MODEL_EXTENSION, JSON_LOAD_MARKER, SEPARATE_GLTF_MODEL_EXTENSION } from '../core/constants.js'
 import { handleReferencedModelFiles, isGltfModelFile } from '../core/utils/find-models.js'
-import { getBasePath } from './base-path.js'
+import { prependAssetsDir, prependBasePath } from './base-path.js'
 import { isBuild } from './dev.js'
 
 // TODO: Do we have to handle base paths when building file paths? Can we even get it in bundler-agnostic way?
@@ -50,7 +50,7 @@ async function loadBinaryGltfModel(this: UnpluginBuildContext, modelFile: string
     path = getRelativeProjectPathToFile(modelFile)
   }
 
-  path = join(getBasePath(), path)
+  path = prependBasePath(path)
 
   return {
     code: `export default ${JSON.stringify(path)};`,
@@ -76,7 +76,7 @@ async function loadSeparateGltfModel(this: UnpluginBuildContext, modelFile: stri
     path = getRelativeProjectPathToFile(modelFile) + JSON_LOAD_MARKER
   }
 
-  path = join(getBasePath(), path)
+  path = prependBasePath(path)
 
   return {
     code: `export default ${JSON.stringify(path)};`,
@@ -131,5 +131,5 @@ function getHashedFilename(file: string, source: Buffer): string {
   const { ext, name } = parse(file)
 
   // TODO: Make this folder configurable?
-  return `models/${name}.${hash.slice(0, 8)}${ext}`
+  return prependAssetsDir(`models/${name}.${hash.slice(0, 8)}${ext}`)
 }

@@ -2,15 +2,28 @@ import type { Compiler as RspackCompiler } from '@rspack/core'
 import type { UnpluginFactory } from 'unplugin'
 import type { Compiler as WebpackCompiler } from 'webpack'
 import type { Options } from '../types.js'
+import { join } from 'node:path'
 import { name as pkgName } from '../../package.json'
 
 const name = `${pkgName}:base-path-detector`
 
+let assetsDir = ''
 let basePath = '/'
 
-export function getBasePath(): string {
-  return basePath
+export function prependAssetsDir(path: string): string {
+  return join(assetsDir, path)
 }
+
+export function prependBasePath(path: string): string {
+  let finalPath = join(basePath, path)
+
+  if (!finalPath.startsWith('http') && !finalPath.startsWith('/')) {
+    finalPath = `/${finalPath}`
+  }
+
+  return finalPath
+}
+
 export const basePathDetector: UnpluginFactory<Options, false> = (options) => {
   if (options.forceBasePath !== undefined) {
     basePath = options.forceBasePath
@@ -55,6 +68,7 @@ export const basePathDetector: UnpluginFactory<Options, false> = (options) => {
 
     vite: {
       configResolved(config) {
+        assetsDir = config.build.assetsDir
         basePath = config.base
       },
     },
