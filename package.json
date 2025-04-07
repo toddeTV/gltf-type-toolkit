@@ -177,6 +177,7 @@
   },
   "dependencies": {
     "@node-rs/xxhash": "~1.7.6",
+    "@sindresorhus/slugify": "2.2.1",
     "citty": "~0.1.6",
     "consola": "~3.4.0",
     "handlebars": "~4.7.8",

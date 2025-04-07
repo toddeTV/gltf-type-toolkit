@@ -1,5 +1,6 @@
 import type { Object3D } from 'three'
 import type { GLTF } from 'three-stdlib'
+import slugify from '@sindresorhus/slugify'
 import { Imports } from './utils/imports.js'
 
 export interface GltfNode {
@@ -57,9 +58,11 @@ function collectNamedChildren(imports: Imports, obj: Object3D, parentNode: GltfN
 }
 
 function toValidIdentifier(name: string): string {
-  if (/^[a-z_]/i.test(name)) {
-    return name
+  name = slugify(name, { lowercase: false, separator: '_' })
+
+  if (!/^[a-z_]/i.test(name)) {
+    name = `_${name}`
   }
 
-  return `_${name}`
+  return name
 }
