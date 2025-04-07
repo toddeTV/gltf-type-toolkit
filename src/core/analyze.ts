@@ -23,7 +23,7 @@ export function analyzeGltfModel({ scenes }: Pick<GLTF, 'scenes'>): { imports: I
     const node: GltfNode = {
       children: [],
       index,
-      name: toValidIdentifier(`${scene.name}Scene`),
+      name: `${toValidIdentifier(scene.name)}Scene`,
       type: imports.addImport('three', scene.type, true),
     }
 
