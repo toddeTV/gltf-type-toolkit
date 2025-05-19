@@ -32,7 +32,7 @@ importers:
         specifier: ^1
         version: 1.2.2(@swc/helpers@0.5.15)
       '@sindresorhus/slugify':
-        specifier: 2.2.1
+        specifier: ~2.2.1
         version: 2.2.1
       astro:
         specifier: '*'
@@ -118,7 +118,7 @@ importers:
         version: 6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
       vite-plugin-inspect:
         specifier: ~10.1.0
-        version: 10.1.0(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
+        version: 10.1.0(@nuxt/kit@3.15.2(magicast@0.3.5)(rollup@4.31.0))(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
 
 packages:
 
@@ -9380,7 +9380,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-plugin-inspect@10.1.0(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)):
+  vite-plugin-inspect@10.1.0(@nuxt/kit@3.15.2(magicast@0.3.5)(rollup@4.31.0))(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)):
     dependencies:
       debug: 4.4.0
       error-stack-parser-es: 1.0.5
@@ -9388,6 +9388,8 @@ snapshots:
       picocolors: 1.1.1
       sirv: 3.0.0
       vite: 6.0.11(@types/node@22.10.9)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0)
+    optionalDependencies:
+      '@nuxt/kit': 3.15.2(magicast@0.3.5)(rollup@4.31.0)
     transitivePeerDependencies:
       - supports-color
 
