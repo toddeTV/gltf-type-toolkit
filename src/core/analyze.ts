@@ -58,7 +58,10 @@ function collectNamedChildren(imports: Imports, obj: Object3D, parentNode: GltfN
 }
 
 function toValidIdentifier(name: string): string {
-  name = slugify(name, { lowercase: false, separator: '_' })
+  name = slugify(name, {
+    lowercase: false,
+    separator: '_',
+  })
 
   if (!/^[a-z_]/i.test(name)) {
     name = `_${name}`
