@@ -2,7 +2,6 @@
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle size][bundle-size-src]][bundle-size-href]
 [![license][license-src]][license-href]
 
 This plugin generates type-safe glTF file representations in TypeScript and optimizes the loading and bundling of
@@ -11,8 +10,8 @@ models in web projects, while being bundler-agnostic (Vite, Rollup, Webpack, esb
 ## project overview
 
 This plugin scans all model files in the project source, deconstructs the glTF JSON representation, and places
-generated type files next to them. It uses [three.js](https://github.com/mrdoob/three.js/) to parse the glTF files,
-including modifications like path resolutions etc.
+generated type files next to them. It creates [three.js](https://github.com/mrdoob/three.js/) types and uses
+it internally to parse the glTF files, including modifications like path resolutions etc.
 
 With this plugin you get:
 
@@ -48,9 +47,8 @@ With this plugin you get:
   - [React](https://react.dev/)
   - [Svelte](https://svelte.dev/)
   - [Vue3](https://vuejs.org/)
+  - [Angular](https://angular.dev/)
   - ...
-
-It will run when your dev server starts and also when you build your project.
 
 ## Sponsoring
 
@@ -62,26 +60,30 @@ Thanks a lot for the support <3
 ## Developer Documentation
 
 For development-related information, including setup instructions for contributors, please refer to the
-[Developer README](./README.dev.md).
+Developer README [`README-dev.md`](./README-dev.md).
 
 ## Getting Started
 
 ### Installation
 
-1. Install with your package manager (we use pnpm and recommend it):<br>
+1. Install with your package manager (we use pnpm and recommend it):
+
    ```bash
-   # choose only one
+   # choose your package manager
    pnpm add -D @todde.tv/gltf-type-toolkit
    npm install --save-dev @todde.tv/gltf-type-toolkit
    yarn add --dev @todde.tv/gltf-type-toolkit
    bun add --dev @todde.tv/gltf-type-toolkit
    ```
+
 2. Extend your `.gitignore` file to exclude generated files:
+
    ```sh
    # Generated glTF model files
    *.gltf.d.ts
    *.gltf.js
    ```
+
 3. Add the plugin to your build tool, for example with [Vite](https://vitejs.dev/):
 
    ```ts
@@ -113,15 +115,24 @@ For development-related information, including setup instructions for contributo
 
 ### usage example with explanations
 
+The plugin will run on:
+
+- on dependency installation
+- on dev server start
+- on project build
+
 Here's an example of how to use the plugin. You can customize this example to suit your needs, such as saving models
 to different folders, changing paths, or adjusting how the model is handled after import.
 
 1. Install the plugin (See [Installation](#installation) above).
+
 2. Add a model to your project, here in the project source under `@/assets/models`. We copy the following in it:
+
    1. `MyModel.gltf` The glTF JSON representation that describes the model.
    2. `MyModel.bin` The binary file of the model, compressed with the [Draco Compression](https://github.com/google/draco).
    3. `MyModel-texture1.png` A texture that the model uses.
    4. `MyModel-texture2.png` A second texture that the model uses.
+
 3. Start your dev to generate all files. With our example model we get:
 
    ```diff
@@ -162,12 +173,12 @@ resulting in the following compatibility in our project:
 | Build Tool                            | Status | Note                                                                                                                                      |
 | ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | [esbuild](https://esbuild.github.io/) | 🟢     |                                                                                                                                           |
+| [Nuxt3](https://nuxt.com/)            | 🟢     |                                                                                                                                           |
 | [Rolldown](https://rolldown.rs/)      | 🟢     | ⚠️ currently experimental in [Unplugin](https://github.com/unjs/unplugin)                                                                 |
 | [Rollup](https://rollupjs.org/)       | 🟢     |                                                                                                                                           |
 | [Rspack](https://www.rspack.dev/)     | 🟢     |                                                                                                                                           |
 | [Vite](https://vitejs.dev/)           | 🟢     |                                                                                                                                           |
 | [Astro](https://astro.build/)         | 🟡     |                                                                                                                                           |
-| [Nuxt3](https://nuxt.com/)            | 🟡     |                                                                                                                                           |
 | [Farm](https://www.farmfe.org/)       | 🔴     | Tested & model files are not emitted (see [Issue #27](https://github.com/toddeTV/gltf-type-toolkit/issues/27)). Contributions welcome! ❤️ |
 | [Webpack](https://webpack.js.org/)    | 🔴     | Tested & model files are borked (see [Issue #30](https://github.com/toddeTV/gltf-type-toolkit/issues/30)). Contributions welcome! ❤️      |
 
@@ -267,8 +278,8 @@ Project founder & head of project:
 
 Honorable mentions to people that helped this project:
 
-- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project and the magic
-  behind the core. Thank you <3
+- [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project. Thank you mate,
+  you rock <3
 
 Respectable mentions to projects that helped this project:
 
@@ -289,7 +300,7 @@ Used assets/ materials including images and 3D models:
 ## License
 
 Copyright (c) 2025-PRESENT [Thorsten Seyschab](https://todde.tv)<br>
-This project is licensed under the MIT License, see the `LICENSE.md` file for more details.
+This project is licensed under the MIT License, see the [`LICENSE.md`](./LICENSE.md) file for more details.
 
 <!-- Badges -->
 
@@ -297,7 +308,9 @@ This project is licensed under the MIT License, see the `LICENSE.md` file for mo
 [npm-version-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
 [npm-downloads-src]: https://img.shields.io/npm/dm/@todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
 [npm-downloads-href]: https://npmjs.com/package/@todde.tv/gltf-type-toolkit
-[bundle-size-src]: https://img.shields.io/bundlephobia/minzip/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[bundle-size-href]: https://bundlephobia.com/package/@toddeTV/gltf-type-toolkit
 [license-src]: https://img.shields.io/github/license/toddeTV/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a
-[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE
+[license-href]: https://github.com/toddeTV/gltf-type-toolkit/blob/main/LICENSE.md
+
+<!-- Not used, as we are a build tool plugin. If our goal were to minimize size, we should ship one plugin per build tool, rather than a single agnostic plugin for all. -->
+<!-- [bundle-size-src]: https://img.shields.io/bundlephobia/minzip/todde.tv/gltf-type-toolkit?style=flat&colorA=181818&colorB=26ab7a -->
+<!-- [bundle-size-href]: https://bundlephobia.com/package/@todde.tv/gltf-type-toolkit -->

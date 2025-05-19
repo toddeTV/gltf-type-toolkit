@@ -23,6 +23,12 @@ export const {{name}} = {
   return {{identifiers.nodeName}};
 }
 
-async function loadModel() {
-  return await gltfLoader.loadAsync(gltfPath);
+let modelPromise;
+
+function loadModel() {
+  if (!modelPromise) {
+    modelPromise = gltfLoader.loadAsync(gltfPath);
+  }
+
+  return modelPromise;
 }
