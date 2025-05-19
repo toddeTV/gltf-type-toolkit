@@ -1,7 +1,7 @@
 
 ## v1.2.0
 
-[compare changes](https://github.com/toddeTV/gltf-type-toolkit/compare/v1.1.0...v1.2.0)
+Compare changes [from v1.1.0 to v1.2.0](https://github.com/toddeTV/gltf-type-toolkit/compare/v1.1.0...v1.2.0) or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
 
 ### 🚀 Enhancements
 
@@ -14,6 +14,10 @@
 ### 📖 Documentation
 
 - Rewrite Contribution & Attribution section in README ([#53](https://github.com/toddeTV/gltf-type-toolkit/pull/53))
+
+### 🏡 Chore
+
+- **release:** v1.2.0 ([#54](https://github.com/toddeTV/gltf-type-toolkit/pull/54))
 
 ### ❤️ Contributors
 
