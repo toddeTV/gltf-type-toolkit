@@ -88,48 +88,6 @@ prefixes like `v`.
 
 The commit message trigger must be present in the main commit message, so to say the first line, not the description.
 
-### GitHub Release & NPM Publishing
-
-Using the suffix `[rel-TYPE-CHANGELOG]` in a commit message on branch `main` will trigger the GitHub
-workflow (CI action) that uses `pnpm changelogen` under the hood to analyze the
-[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) from the last version to the current
-commit.
-
-#### Allowed parameter
-
-- `TYPE` can be:
-
-  - `none` will take the version from `package.json` as new version (best if you already set the wanted new version
-    locally and pushed it)
-  - All other types will bump the version in `package.json` like the following:
-    - automatically:
-      - `auto`: Bump the version depending on the detected semver changes.
-    - manually by forcing a version increase:
-      - `major`: Bump as a semver-major version
-      - `minor`: Bump as a semver-minor version
-      - `patch`: Bump as a semver-patch version
-      - `premajor`: Bump as a semver-premajor version, can set id with string.
-      - `preminor`: Bump as a semver-preminor version, can set id with string.
-      - `prepatch`: Bump as a semver-prepatch version, can set id with string.
-      - `prerelease`: Bump as a semver-prerelease version, can set id with string.
-
-- `CHANGELOG` can be:
-
-  - `n` for using the given `CHANGELOG.md` without updates (best if you already created it locally and pushed it)
-  - `y` for updating the `CHANGELOG.md` according to the semver commit messages from last version tag to current
-    commit (recommended)
-
-#### logic
-
-- evaluate the parameter and work accordingly
-- \[optional\] Committing changes as author `github-actions[bot] <no-reply@todde.tv>` directly on branch `main` if
-  changes were made
-- Creating a tag at the new version commit on with the version number
-- Creating a GitHub Release out of it
-- Publishing the package into the [NPM Registry](https://registry.npmjs.org/)
-
-You can use `pnpm changelogen --dry` to generate the new changelog in a dry run to preview in development.
-
 ## Template Compilation and Usage
 
 It uses Handlebars to generate the code.
