@@ -1,5 +1,6 @@
 import type { Options } from './types'
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule } from '@nuxt/kit'
+import { name } from '../package.json'
 import vite from './vite.js'
 import webpack from './webpack.js'
 import '@nuxt/schema'
@@ -12,7 +13,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   meta: {
     configKey: 'gltfTypeToolkit',
-    name: '@todde.tv/gltf-type-toolkit',
+    name,
   },
   setup(options, _nuxt) {
     addVitePlugin(() => vite(options))

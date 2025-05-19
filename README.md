@@ -92,16 +92,22 @@ Developer README [`README-dev.md`](./README-dev.md).
 
    export default defineConfig({
      plugins: [
+       // TODO while this list of possible plugin options is complete, better outsource them in a own section of the README
        gltf({ // Plugin options are defined in: `@todde.tv/gltf-type-toolkit/src/entries/types.ts`
          /**
           * Module that provides an instance of a three.js GLTFLoader as the default export.
           */
-         // customGltfLoaderModule: '@/utils/customGltfLoader.ts',
+         // customGltfLoaderModule: '@/utils/customGltfLoader.ts', // type: string | undefined
 
          /**
           * Print extra information.
           */
-         // verbose: true,
+         // verbose: true, // type: boolean | undefined
+
+         /**
+          * This string is prefixed to all model file references. If missing it will be guessed from your build tool.
+          */
+         // forceBasePath: '/foo/bar', // type: string | undefined
        }),
      ],
    })

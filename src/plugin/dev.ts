@@ -1,6 +1,10 @@
 import type { Compiler as RspackCompiler } from '@rspack/core'
-import type { UnpluginOptions } from 'unplugin'
+import type { UnpluginFactory } from 'unplugin'
 import type { Compiler as WebpackCompiler } from 'webpack'
+import type { Options } from '../types.js'
+import { name as pkgName } from '../../package.json'
+
+const name = `${pkgName}:build-detector`
 
 let _isBuild = true
 
@@ -8,7 +12,7 @@ export function isBuild(): boolean {
   return _isBuild
 }
 
-export const buildDetector = {
+export const buildDetector: UnpluginFactory<Options, false> = () => ({
   esbuild: {
     // No way to detect build/serve mode.
   },
@@ -18,6 +22,8 @@ export const buildDetector = {
       _isBuild = false
     },
   },
+
+  name,
 
   rolldown: {
     // Has only build mode.
@@ -40,13 +46,12 @@ export const buildDetector = {
   webpack(compiler) {
     detectWebpackDevServer(compiler, () => _isBuild = false)
   },
-} satisfies Omit<UnpluginOptions, 'name'>
+})
 
 function detectWebpackDevServer(compiler: WebpackCompiler | RspackCompiler, onDev: () => void): void {
   let orig = (): void => {}
 
   if (compiler.options.devServer) {
-    // @ts-expect-error Types are not available but this should match.
     orig = compiler.options.devServer.onListening
   }
 

@@ -1,4 +1,5 @@
 import type { Options } from './types'
+import { name } from '../package.json'
 import unplugin from './index.js'
 
 export default (options: Options): any => ({
@@ -8,5 +9,5 @@ export default (options: Options): any => ({
       astro.config.vite.plugins.push(unplugin.vite(options))
     },
   },
-  name: '@todde.tv/gltf-type-toolkit',
+  name,
 })
