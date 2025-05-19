@@ -18,9 +18,9 @@ const identifiers = {
 
 export async function generateModelTypes(
   modelFile: string,
-  options: Options | undefined,
+  options: Options,
 ): Promise<void> {
-  if (options?.verbose) {
+  if (options.verbose) {
     consola.info(`Parsing model ${modelFile}`)
   }
 
@@ -36,8 +36,8 @@ export async function generateModelTypes(
   ])
 }
 
-async function generateDeclarationFile(options: Options | undefined, targetFile: string, analysis: GltfAnalysis): Promise<void> {
-  if (options?.verbose) {
+async function generateDeclarationFile(options: Options, targetFile: string, analysis: GltfAnalysis): Promise<void> {
+  if (options.verbose) {
     consola.info(`Generating declaration file: ${targetFile}`)
   }
 
@@ -46,8 +46,8 @@ async function generateDeclarationFile(options: Options | undefined, targetFile:
   })
 }
 
-async function generateRuntimeFile(options: Options | undefined, targetFile: string, analysis: GltfAnalysis, modelFile: string): Promise<void> {
-  if (options?.verbose) {
+async function generateRuntimeFile(options: Options, targetFile: string, analysis: GltfAnalysis, modelFile: string): Promise<void> {
+  if (options.verbose) {
     consola.info(`Generating runtime file: ${targetFile}`)
   }
 
@@ -56,7 +56,7 @@ async function generateRuntimeFile(options: Options | undefined, targetFile: str
     relativeGltfPath = `./${relativeGltfPath}`
   }
 
-  const loaderPath = options?.customGltfLoaderModule ?? `${name}/gltf-loader`
+  const loaderPath = options.customGltfLoaderModule ?? `${name}/gltf-loader`
 
   await writeFile(
     targetFile,
