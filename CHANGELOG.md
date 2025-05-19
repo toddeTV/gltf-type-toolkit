@@ -1,4 +1,29 @@
 
+## v1.2.0
+
+Compare changes [from v1.1.0 to v1.2.0](https://github.com/toddeTV/gltf-type-toolkit/compare/v1.1.0...v1.2.0) or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
+
+### 🚀 Enhancements
+
+- Add basepath handling with optional plugin option ([#51](https://github.com/toddeTV/gltf-type-toolkit/pull/51))
+
+### 🩹 Fixes
+
+- Always build valid identifiers for model node names ([#52](https://github.com/toddeTV/gltf-type-toolkit/pull/52))
+
+### 📖 Documentation
+
+- Rewrite Contribution & Attribution section in README ([#53](https://github.com/toddeTV/gltf-type-toolkit/pull/53))
+
+### 🏡 Chore
+
+- **release:** v1.2.0 ([#54](https://github.com/toddeTV/gltf-type-toolkit/pull/54))
+
+### ❤️ Contributors
+
+- Thorsten Seyschab ([@toddeTV](http://github.com/toddeTV))
+- Andreas Fehn ([@fehnomenal](http://github.com/fehnomenal))
+
 ## v1.1.0
 
 Compare changes [from v1.0.0 to v1.1.0](https://github.com/toddeTV/gltf-type-toolkit/compare/v1.0.0...v1.1.0) or see [full changelog](https://github.com/toddeTV/gltf-type-toolkit/blob/main/CHANGELOG.md).
