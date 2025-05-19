@@ -80,7 +80,7 @@ prefixes like `v`.
       ```
    3. [optional] Change more things if needed (e.g. add description text at the top, ...)
 10. Commit the made changes to the branch.<br>
-    (You can use whatever commit message you want to use, e.g. `chore: add current release PR to changelog`.)
+    (You can use whatever commit message you want to use, e.g. `chore: polish & extend changelog`.)
 11. Squash & merge the GitHub PR to `main`.
 12. The GitHub workflow action defined in the file `github-release-and-npm-package-publish.yml` will create a
     GitHub Release & a NPM package publishing for the new version.

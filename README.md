@@ -270,18 +270,34 @@ If you have problems, maybe one of the following will help:
 - Delete your build output folder (maybe some old builds copied model files in there and our plugin is now scanning them).
 - We currently do not provide a watcher. Restart your dev environment when changing model files.
 
-## Attribution/ Contribution
+## Contribution & Attribution
 
-Project founder & head of project:
+### Project Contributors
+
+<a href="https://github.com/toddeTV/gltf-type-toolkit/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=toddeTV/gltf-type-toolkit" />
+</a>
+
+### Core Team
+
+**Project Founder & Lead:**
 
 - [Thorsten Seyschab](https://todde.tv)
 
-Honorable mentions to people that helped this project:
+**Current Additional Core Team Members:**
 
 - [Andreas Fehn](https://github.com/fehnomenal) as contributor who helped incredible with the project. Thank you mate,
-  you rock <3
+  you rock!
 
-Respectable mentions to projects that helped this project:
+### Acknowledgments
+
+**Special Thanks:**<br>
+_(People who provided valuable help on specific topics or issues)_
+
+- \[currently none\]
+
+**Helpful Projects:**<br>
+_(Projects that provided valuable inspiration or resources.)_
 
 - [zlig (zen-landscape-idle-game)](https://github.com/toddeTV/zlig): A Japanese zen-inspired idle browser game that
   showcases lightweight web technologies like `Vue` and `Three.js` to create fully browser-based games. The idea and
@@ -289,11 +305,13 @@ Respectable mentions to projects that helped this project:
   originated during the development of zlig, where we required type-safe glTF representations to enable faster and
   more reliable development.
 
-Used programs/ softwares, services and dependencies - besides the ones in `./package.json`:
+**Additional Tools:**<br>
+_(excluding those listed in `./package.json`)_
 
 - [GitHub Copilot](https://github.com/features/copilot) was used in private mode for programming questions.
 
-Used assets/ materials including images and 3D models:
+**Assets & Materials Used:**<br>
+_(including images & 3D models; mostly only those requiring attribution)_
 
 - \[currently none\]
 
