@@ -90,7 +90,7 @@ For development-related information, including setup instructions for contributo
 
    export default defineConfig({
      plugins: [
-       // TODO while this list of possible plugin options is complete, better outsource them in a DEV documentation
+       // TODO while this list of possible plugin options is complete, better outsource them in a own section of the README
        gltf({ // Plugin options are defined in: `@todde.tv/gltf-type-toolkit/src/entries/types.ts`
          /**
           * Module that provides an instance of a three.js GLTFLoader as the default export.
